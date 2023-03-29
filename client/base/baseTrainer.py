@@ -27,7 +27,7 @@ class BaseTrainer:
         self.start_epoch = 1 # 0 or 1 
         
     @abstractmethod
-    def _train_epoch(self, epoch):
+    def _train_epoch(self, epoch, dataloader):
         """
         :info: Training logic for an epoch including the forward and the backward propagation
         
