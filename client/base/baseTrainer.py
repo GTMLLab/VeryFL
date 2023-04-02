@@ -1,33 +1,38 @@
 from abc import abstractmethod
-from ...util import jsonFormat 
-from ...chainfl.interact import chainProxy
+from util import jsonFormat
+from chainfl.interact import chainProxy
 
 class BaseTrainer:
     """
     Base class for all trainers.
     Each client trainer need to complement the method below.
     """
-    def __init__(self, model, criterion, optimizer, config):
+    def __init__(self, model, dataloader,criterion, optimizer, config:dict):
         '''
         :param
         model: pass the init model to this trainer
         criterion: the loss function
         config: dict prepare to provide some flexible choice in the future
-        
-        '''
+                config now contains        
+       '''
+        self.dataloader = dataloader
         self.config = config
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
+        
+        #Communication Channel
         self.pipe = chainProxy()
         
         self.id = config["client_id"]
         # cfg_trainer = config['trainer']
         # self.epochs = cfg_trainer['epochs']
         self.start_epoch = 1 # 0 or 1 
-        
+    
+    
+    #To adaptive suit all kind of downstream tasks.
     @abstractmethod
-    def _train_epoch(self, epoch, dataloader):
+    def _train_epoch(self, epoch):
         """
         :info: Training logic for an epoch including the forward and the backward propagation
         
@@ -42,31 +47,31 @@ class BaseTrainer:
                       ... 
                   }
         """
-        raise NotImplementedError
+        pass
 
-    def train(self):
+    def train(self,total_epoch):
         """
         Full training logic
         """
-        for epoch in range(self.start_epoch, self.epochs + 1):
+        for epoch in range(self.start_epoch,total_epoch):
             result = self._train_epoch(epoch)
             response = self._upload_model(epoch)
-            self.model = self._download_model(epoch)
+            self._download_model(epoch)
+
     @abstractmethod
     def _on_before_upload(self,epoch):
         '''
         Here may do some thing before upload like compression, crypto
         '''
-        raise NotImplementedError
+        pass
     
     @abstractmethod
     def _on_after_download(self,epoch):
         '''
         Here may do some thing after download, the download model may be a compressed one or cryptoed one.
         '''
+        pass
         
-        raise NotImplementedError
-    
     @abstractmethod
     def _upload_model(self, epoch):
         """
@@ -93,8 +98,8 @@ class BaseTrainer:
         Resume from saved checkpoints
         :param resume_path: Checkpoint path to be resumed
         """
-        self.pipe.download_model()
-        
+        download_params = self.pipe.download_model()
+        self.model.load_state_dict(download_params['state_dict'])
         
 # if __name__ == '__main__':
 #     #No test needed for an abstract method

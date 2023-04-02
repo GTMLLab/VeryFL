@@ -5,18 +5,17 @@
 import copy
 import torch
 from torch import nn
-
-from ..base.baseTrainer import BaseTrainer
+from client.base.baseTrainer import BaseTrainer
 
 class fedproxTrainer(BaseTrainer):
     
-    def __init__(self, model, criterion, optimizer, config, mu):
+    def __init__(self, model,dataloader,criterion, optimizer, config, mu=0.5):
         #这里可能要多额外保存一个global model供fedprox使用
         #同样训练时critertion就加入fedprox的近端项即可，这个近端项的计算可以写成一个额外的函数
-        super().__init__(model, criterion, optimizer, config)
+        super().__init__(model, dataloader, criterion, optimizer, config)
         self.mu = mu
     
-    def _train_epoch(self, epoch, dataloader):
+    def _train_epoch(self, epoch):
 
         model = self.model
         config = self.config
@@ -28,26 +27,31 @@ class fedproxTrainer(BaseTrainer):
         previous_model = copy.deepcopy(model.state_dict())
 
         # train and update
-        criterion = nn.CrossEntropyLoss().to(device)  # pylint: disable=E1102
-        if self.optimizer == "sgd":
-            optimizer = torch.optim.SGD(
-                filter(lambda p: p.requires_grad, self.model.parameters()),
-                lr=config["lr"],
-            )
-        else:
-            optimizer = torch.optim.Adam(
-                filter(lambda p: p.requires_grad, self.model.parameters()),
-                lr=config["lr"],
+        optimizer = self.optimizer(
+            filter(lambda p: p.requires_grad, self.model.parameters()),
                 weight_decay=config["weight_decay"],
-                amsgrad=True,
+                lr=config["lr"],
             )
+        # if self.optimizer == "sgd":
+        #     optimizer = torch.optim.SGD(
+        #         filter(lambda p: p.requires_grad, self.model.parameters()),
+        #         weight_decay=config["weight_decay"],
+        #         lr=config["lr"],
+        #     )
+        # else:
+        #     optimizer = torch.optim.Adam(
+        #         filter(lambda p: p.requires_grad, self.model.parameters()),
+        #         lr=config["lr"],
+        #         weight_decay=config["weight_decay"],
+        #         amsgrad=True,
+        #     )
 
         batch_loss = []
-        for batch_idx, (x, labels) in enumerate(dataloader):
+        for _, (x, labels) in enumerate(self.dataloader):
             x, labels = x.to(device), labels.to(device)
             model.zero_grad()
             log_probs = model(x)
-            loss = criterion(log_probs, labels)  # pylint: disable=E1102
+            loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
             # if args.fedprox:
             fed_prox_reg = 0.0
             for name, param in model.named_parameters():
