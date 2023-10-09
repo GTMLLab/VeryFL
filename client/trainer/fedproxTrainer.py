@@ -8,18 +8,17 @@ from torch import nn
 from client.base.baseTrainer import BaseTrainer
 
 class fedproxTrainer(BaseTrainer):
-    
-    def __init__(self, model,dataloader,criterion, optimizer, config, mu=0.5):
+    def __init__(self, model,dataloader,criterion, optimizer, args, mu=0.5):
         #这里可能要多额外保存一个global model供fedprox使用
         #同样训练时critertion就加入fedprox的近端项即可，这个近端项的计算可以写成一个额外的函数
-        super().__init__(model, dataloader, criterion, optimizer, config)
+        super().__init__(model, dataloader, criterion, optimizer, args)
         self.mu = mu
-    
+        self.criterion = torch.nn.CrossEntropyLoss()
     def _train_epoch(self, epoch):
 
         model = self.model
-        config = self.config
-        device = config["device"]
+        args = self.args
+        device = args["device"]
 
         model.to(device)
         model.train()
@@ -29,20 +28,20 @@ class fedproxTrainer(BaseTrainer):
         # train and update
         optimizer = self.optimizer(
             filter(lambda p: p.requires_grad, self.model.parameters()),
-                weight_decay=config["weight_decay"],
-                lr=config["lr"],
+                weight_decay=args["weight_decay"],
+                lr=args["lr"],
             )
         # if self.optimizer == "sgd":
         #     optimizer = torch.optim.SGD(
         #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         weight_decay=config["weight_decay"],
-        #         lr=config["lr"],
+        #         weight_decay=args["weight_decay"],
+        #         lr=args["lr"],
         #     )
         # else:
         #     optimizer = torch.optim.Adam(
         #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         lr=config["lr"],
-        #         weight_decay=config["weight_decay"],
+        #         lr=args["lr"],
+        #         weight_decay=args["weight_decay"],
         #         amsgrad=True,
         #     )
 

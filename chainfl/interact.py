@@ -2,16 +2,19 @@
 include the upload and the download method for client to interact with the blockchain.
 '''
 from util import jsonFormat
+import brownie
+import string
 import json
 def upload():
     raise NotImplementedError 
 
 class chainProxy():
     def __init__(self):
-        self.upload_params = None 
+        self.upload_params = None
+        p = bro
         #raise NotImplementedError
         
-    def client_regist(self):
+    def client_regist(self)->string:
         raise NotImplementedError
     
     def upload_model(self,upload_params:dict):
@@ -34,4 +37,3 @@ class chainProxy():
         download_params = self.upload_params
         download_params['state_dict']  = jsonFormat.json2model(download_params['state_dict'])   
         return download_params
-    

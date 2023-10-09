@@ -27,9 +27,8 @@ class serverSimulator:
         self.global_model = None
         if args != None:
             self.args = args
-            
         self.upload_model_list = []
-    def _clear_pool(self):
+    def _clear_upload_model_list(self):
         self.upload_model_list = []
         
     def _is_all_client_upload(self) -> bool:
@@ -52,7 +51,7 @@ class serverSimulator:
         return
 
     def save_model(self,file_name='saved_model'):
-        save_path = str(self.Mediator.params['checkpoint_folder'])
+        save_path = str(self.args['checkpoint_folder'])
         #run after the global model was update
         #save the torch state_dict
         file_path_prefix = save_path + file_name
@@ -73,6 +72,7 @@ class serverSimulator:
         if(self._is_all_client_upload()):
             trained_model = self.aggergator.aggregate(self.upload_model_list)
             self._set_global_model(trained_model)
+            self._clear_upload_model_list()
         
     def download_model(self,params=None) -> OrderedDict:
         if(self.global_model == None): return "Failed to get global model"
@@ -102,4 +102,3 @@ if __name__ == '__main__':
     for i in test_sample_pool:
         upload_param = {'state_dict': i.state_dict()}
         server.upload_model(upload_param)
-        

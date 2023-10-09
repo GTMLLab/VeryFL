@@ -1,13 +1,14 @@
 from abc import abstractmethod
 from util import jsonFormat
 from chainfl.interact import chainProxy
+from server.serverSimulator import serverSimulator
 
 class BaseTrainer:
     """
     Base class for all trainers.
     Each client trainer need to complement the method below.
     """
-    def __init__(self, model, dataloader,criterion, optimizer, config:dict):
+    def __init__(self, model, dataloader,criterion, optimizer, args={}):
         '''
         :param
         model: pass the init model to this trainer
@@ -16,16 +17,15 @@ class BaseTrainer:
                 config now contains        
        '''
         self.dataloader = dataloader
-        self.config = config
+        self.args = args
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
         
         #Communication Channel
         self.pipe = chainProxy()
-        
-        self.id = config["client_id"]
-        # cfg_trainer = config['trainer']
+        self.id = args.get("client_id") 
+        # cfg_trainer = args['trainer']
         # self.epochs = cfg_trainer['epochs']
         self.start_epoch = 1 # 0 or 1 
     

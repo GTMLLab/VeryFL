@@ -10,24 +10,16 @@ class ServerAggregator(ABC):
              _aggregation_alg: the main aggregation federated learning algoritm.
     """
      
-    def __init__(self, model, args):
+    def __init__(self, model=None, args=None):
         self.model = model
         self.id = 0
         self.args = args
 
     def set_id(self, aggregator_id):
         self.id = aggregator_id
-
-    @abstractmethod
-    def get_model_params(self):
-        pass
-
-    @abstractmethod
-    def set_model_params(self, model_parameters):
-        pass
     
     @abstractmethod
-    def _aggregate_alg(self,raw_client_model_or_grad_list):
+    def _aggregate_alg(self,raw_client_model_or_grad_list:List[OrderedDict]):
         '''
         This method complement the aggregation method, 
         like fedavg and some aggregate operation done in server side,
@@ -50,9 +42,9 @@ class ServerAggregator(ABC):
         '''
         pass
 
-    def aggregate(self, raw_client_model_or_grad_list: List[OrderedDict]) -> OrderedDict:
+    def aggregate(self, raw_client_model_or_grad_list: [OrderedDict]) -> OrderedDict:
         return self._aggregate_alg(raw_client_model_or_grad_list)
-        return FedMLAggOperator.agg(self.args, raw_client_model_or_grad_list)
+        #return FedMLAggOperator.agg(self.args, raw_client_model_or_grad_list)
 
     def on_after_aggregation(self, aggregated_model_or_grad: OrderedDict) -> OrderedDict:
         '''
@@ -66,6 +58,3 @@ class ServerAggregator(ABC):
     def test(self, test_data, device, args):
         pass
     
-    @abstractmethod
-    def test_all(self, train_data_local_dict, test_data_local_dict, device, args) -> bool:
-        pass

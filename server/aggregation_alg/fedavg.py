@@ -8,7 +8,10 @@ from ..base.baseAggregator import ServerAggregator
 class fedavgAggregator(ServerAggregator):
     def __init__(self):
         super().__init__()
-
+    def on_before_aggregation():
+        pass
+    def test():
+        pass
     def _aggregate_alg(self, raw_client_model_or_grad_list):
         # 实现FedAvg聚合算法
         aggregated_model = None
@@ -30,7 +33,6 @@ class fedavgAggregator(ServerAggregator):
 
 
 if __name__ == '__main__':
-    # 单元测试
     client1_model = {'weight': 0.5, 'bias': 0.2}
     client2_model = {'weight': 0.3, 'bias': 0.1}
     client3_model = {'weight': 0.6, 'bias': 0.3}
