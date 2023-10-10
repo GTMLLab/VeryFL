@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from util import jsonFormat
 from chainfl.interact import chainProxy
-from server.serverSimulator import serverSimulator
+#from server.serverSimulator import serverSimulator
 
 class BaseTrainer:
     """
@@ -27,7 +27,7 @@ class BaseTrainer:
         self.id = args.get("client_id") 
         # cfg_trainer = args['trainer']
         # self.epochs = cfg_trainer['epochs']
-        self.start_epoch = 1 # 0 or 1 
+        self.start_epoch = 0 # 0 or 1 
     
     
     #To adaptive suit all kind of downstream tasks.
@@ -53,11 +53,13 @@ class BaseTrainer:
         """
         Full training logic
         """
+        log = []
         for epoch in range(self.start_epoch,total_epoch):
             result = self._train_epoch(epoch)
-            response = self._upload_model(epoch)
-            self._download_model(epoch)
-
+            log.append(result)
+            #response = self._upload_model(epoch)
+            #self._download_model(epoch)
+        return log
     @abstractmethod
     def _on_before_upload(self,epoch):
         '''

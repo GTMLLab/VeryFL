@@ -2,21 +2,48 @@
 include the upload and the download method for client to interact with the blockchain.
 '''
 from util import jsonFormat
-import brownie
+from brownie import *
 import string
 import json
+#chain init
+p = project.load(project_path="chainEnv",name="chainServer")
+p.load_config()
+from brownie.project.chainServer import *
+network.connect('development')
+#SimpleStorage.deploy({'from':accounts[0]})
+server_accounts = accounts[0]
+watermarkNegotiation.deploy({'from':server_accounts})
+clientManager.deploy({'from':server_accounts})
+
+        
 def upload():
     raise NotImplementedError 
 
+
+#utils for blockchain
 class chainProxy():
     def __init__(self):
         self.upload_params = None
-        p = bro
-        #raise NotImplementedError
+        self.account_num = len(accounts) - 1 #accounts used for client
+        self.watermark_proxy = watermarkNegotiation[0]
+        self.server_accounts = accounts[0]
+        self.client_num = 0
+        # blockchain_init
         
-    def client_regist(self)->string:
-        raise NotImplementedError
+    def add_account(self)->str:
+        account = accounts.add()
+        self.account_num += 1
+        return account.address
     
+    #construct the projection between account and client
+    def client_regist(self)->str:
+        self.client_num += 1
+        if(self.account_num<self.client_num):self.add_account()
+        return str(self.client_num) 
+    
+    def watermark_negotitaion(self,client_id:str,watermark_length=64):
+        client_id = int(client_id)
+        self.watermark_proxy.generateWatermark({'from':accounts[client_id]})
     def upload_model(self,upload_params:dict):
         '''
         This function recieve a dict and the value in this dict must be the type which json can serilized
@@ -37,3 +64,5 @@ class chainProxy():
         download_params = self.upload_params
         download_params['state_dict']  = jsonFormat.json2model(download_params['state_dict'])   
         return download_params
+
+chain_proxy = chainProxy()

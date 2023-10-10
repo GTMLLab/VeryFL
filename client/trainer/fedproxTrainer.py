@@ -78,6 +78,7 @@ class fedproxTrainer(BaseTrainer):
             epoch_loss = 0.0
         else:
             epoch_loss = (sum(batch_loss) / len(batch_loss))
+        print(epoch_loss)
         return {
             "Client Index = {}\tEpoch: {}\tLoss: {:.6f}".format(
                 self.id, epoch, epoch_loss

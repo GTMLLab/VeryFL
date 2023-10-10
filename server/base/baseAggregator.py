@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Dict, OrderedDict
+from client.clients import client
 class ServerAggregator(ABC):
     """Abstract base class for federated learning trainer.
     
@@ -14,12 +15,15 @@ class ServerAggregator(ABC):
         self.model = model
         self.id = 0
         self.args = args
-
+        self.model_pool = []
     def set_id(self, aggregator_id):
         self.id = aggregator_id
-    
+    def receive_upload(self,client_pool:List[client]):
+        for client in client_pool:
+            self.model_pool.append(client.get_model_state_dict())
+        
     @abstractmethod
-    def _aggregate_alg(self,raw_client_model_or_grad_list:List[OrderedDict]):
+    def _aggregate_alg(self,raw_client_model_or_grad_list:List[OrderedDict]=None):
         '''
         This method complement the aggregation method, 
         like fedavg and some aggregate operation done in server side,
@@ -33,7 +37,7 @@ class ServerAggregator(ABC):
     
         
     @abstractmethod
-    def on_before_aggregation(
+    def _on_before_aggregation(
         self, raw_client_model_or_grad_list: List[OrderedDict]
     ) -> List[OrderedDict]:
         '''
@@ -42,11 +46,12 @@ class ServerAggregator(ABC):
         '''
         pass
 
-    def aggregate(self, raw_client_model_or_grad_list: [OrderedDict]) -> OrderedDict:
+    def aggregate(self, raw_client_model_or_grad_list: [OrderedDict]=None) -> OrderedDict:
+        if(raw_client_model_or_grad_list is None): raw_client_model_or_grad_list = self.model_pool
         return self._aggregate_alg(raw_client_model_or_grad_list)
         #return FedMLAggOperator.agg(self.args, raw_client_model_or_grad_list)
 
-    def on_after_aggregation(self, aggregated_model_or_grad: OrderedDict) -> OrderedDict:
+    def _on_after_aggregation(self, aggregated_model_or_grad: OrderedDict) -> OrderedDict:
         '''
         to do some coupled operation with the on before the aggregation.
         like the dp-encode or model compression stratgy.

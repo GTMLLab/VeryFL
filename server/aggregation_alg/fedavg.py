@@ -8,11 +8,14 @@ from ..base.baseAggregator import ServerAggregator
 class fedavgAggregator(ServerAggregator):
     def __init__(self):
         super().__init__()
-    def on_before_aggregation():
+    def _on_before_aggregation():
+        pass
+    def _on_after_aggregation():
         pass
     def test():
         pass
-    def _aggregate_alg(self, raw_client_model_or_grad_list):
+    def _aggregate_alg(self, raw_client_model_or_grad_list=None):
+        if(raw_client_model_or_grad_list is None): raw_client_model_or_grad_list = self.model_pool
         # 实现FedAvg聚合算法
         aggregated_model = None
         if isinstance(raw_client_model_or_grad_list[0], dict):

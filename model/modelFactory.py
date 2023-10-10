@@ -1,6 +1,6 @@
 from .resnet import ResNet18
 from .alexnet import createAlexNet
-
+from .simple_cnn import get_simple_cnn
 
 class modelFactory:
     '''
@@ -15,6 +15,8 @@ class modelFactory:
             return ResNet18(class_num)
         elif model=='alexnet':
             return createAlexNet(class_num)
+        elif model=='simpleCNN':
+            return get_simple_cnn(class_num)
         else:raise Exception(f"Unrecognized Model")
         
 

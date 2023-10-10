@@ -4,8 +4,8 @@ from client.base.baseTrainer import BaseTrainer
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch
-
-
+from copy import deepcopy
+from typing import OrderedDict
 
 class client:
     '''
@@ -26,21 +26,25 @@ class client:
         args = {},
         #args is a dict
     )->None:
-        self.model = model
+        self.model = deepcopy(model)
         self.client_id = client_id
         self.dataloader = dataloader
         self.trainer = trainer
         self.args = args
+        self.num_steps = num_steps
     def set_model(self,model:nn.Module):
-        self.model = model
+        self.model = deepcopy(model)
+    def load_state_dict(self,state_dict:OrderedDict):
+        self.model.load_state_dict(state_dict=state_dict)
+        
+    def get_model_state_dict(self)->OrderedDict:
+        return self.model.state_dict()
     
     @abstractmethod
     def train(self):
         return
 
 class BaseClient(client):
-    def __init__():
-        super().__init__()
     def train(self):
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),torch.optim.SGD,self.args)
         cal.train(self.num_steps)
