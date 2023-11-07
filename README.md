@@ -3,4 +3,8 @@ Chainfl is a simple federated learning framework based on blockchain(Etherenum N
 ## Content
 1. Project Dependence
 2. Code Structure and Usage
-3. Implement 
+3. Implemented Algorithm
+   
+   3.1 Client Selection Strategy on Blochchain
+
+   3.2 Model Watermark 

@@ -18,26 +18,27 @@ class client:
     '''
     def __init__(
         self,
-        client_id:str,
-        dataloader:DataLoader,
-        model:nn.Module,
+        client_id: str,
+        dataloader: DataLoader,
+        model: nn.Module,
         trainer: BaseTrainer,
-        num_steps = 1,
-        args = {},
-        #args is a dict
-    )->None:
+        num_steps: int = 1,
+        args: dict = {},
+    ) -> None:
         self.model = deepcopy(model)
         self.client_id = client_id
         self.dataloader = dataloader
         self.trainer = trainer
         self.args = args
         self.num_steps = num_steps
-    def set_model(self,model:nn.Module):
+    
+    def set_model(self, model: nn.Module) -> None:
         self.model = deepcopy(model)
-    def load_state_dict(self,state_dict:OrderedDict):
+        
+    def load_state_dict(self, state_dict: OrderedDict) -> None:
         self.model.load_state_dict(state_dict=state_dict)
         
-    def get_model_state_dict(self)->OrderedDict:
+    def get_model_state_dict(self) -> OrderedDict:
         return self.model.state_dict()
     
     @abstractmethod

@@ -60,6 +60,7 @@ class BaseTrainer:
             #response = self._upload_model(epoch)
             #self._download_model(epoch)
         return log
+    
     @abstractmethod
     def _on_before_upload(self,epoch):
         '''

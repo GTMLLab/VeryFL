@@ -1,0 +1,7 @@
+__pycache__
+data/
+chainEnv/interfaces/
+chainEnv/tests/
+chainEnv/contracts/FedAvg
+chainEnv/interfaces/
+chainEnv/scripts/
