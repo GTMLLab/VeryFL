@@ -1,36 +1,54 @@
 from abc import abstractmethod
+import logging
 from util import jsonFormat
 from chainfl.interact import chainProxy
+
+import torch.optim
 #from server.serverSimulator import serverSimulator
+logger = logging.getLogger(__name__)
 
 class BaseTrainer:
     """
     Base class for all trainers.
     Each client trainer need to complement the method below.
     """
-    def __init__(self, model, dataloader,criterion, optimizer, args={}):
+    def __init__(self, model, dataloader,criterion, args={}):
         '''
         :param
-        model: pass the init model to this trainer
-        criterion: the loss function
-        config: dict prepare to provide some flexible choice in the future
-                config now contains        
+        model:     Pass the init model to this trainer
+        criterion: The loss function
+        args:      Training parameters    
        '''
         self.dataloader = dataloader
         self.args = args
         self.model = model
         self.criterion = criterion
-        self.optimizer = optimizer
         
         #Communication Channel
         self.pipe = chainProxy()
         self.id = args.get("client_id") 
-        # cfg_trainer = args['trainer']
-        # self.epochs = cfg_trainer['epochs']
-        self.start_epoch = 0 # 0 or 1 
+        self.start_epoch = 0
     
     
     #To adaptive suit all kind of downstream tasks.
+    def construct_optimizer(self):
+        logger.info(f"Constructing Optimizer {self.args['optimizer']}")
+        if self.args['optimizer'] == "SGD":
+            self.optimizer = torch.optim.SGD(
+                filter(lambda p: p.requires_grad, self.model.parameters()),
+                weight_decay = self.args["weight_decay"],
+                lr = self.args["lr"],
+            )
+        elif self.args['optimizer'] == "Adam":
+            self.optimizer = torch.optim.Adam(
+                filter(lambda p: p.requires_grad, self.model.parameters()),
+                lr = self.args["lr"],
+                weight_decay = self.args["weight_decay"],
+                amsgrad=True,
+            )
+        else : 
+            logger.error(f"Unknow Optimizer type {self.args['optimizer']}")
+            raise Exception(f"Unknow Optimizer type {self.args['optimizer']}")
     @abstractmethod
     def _train_epoch(self, epoch):
         """
@@ -53,6 +71,7 @@ class BaseTrainer:
         """
         Full training logic
         """
+        self.construct_optimizer()
         log = []
         for epoch in range(self.start_epoch,total_epoch):
             result = self._train_epoch(epoch)

@@ -3,7 +3,7 @@ import logging
 from torch.utils.data import DataLoader
 
 from server.aggregation_alg.fedavg import fedavgAggregator
-from client.clients import BaseClient
+from client.clients import Client,BaseClient
 from client.trainer.fedproxTrainer import fedproxTrainer
 
 from model.ModelFactory import ModelFactory
@@ -25,6 +25,7 @@ global_args = {
 }
 
 train_args = {
+    'optimizer': 'SGD',
     'device': 'cuda',
     'lr':1e-4,
     'weight_decay':1e-5,  
@@ -47,7 +48,7 @@ class Task:
         #server也类似
         logger.info("Constructing Server from aggergator: Fedavg server")
         self.server = fedavgAggregator()
-        self.client_pool = []
+        self.client_pool : list[Client] = []
         
         logger.info("Constructing Model from model factory with model %s and class_num %d", global_args['model'], global_args['class_num'])
         self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'))

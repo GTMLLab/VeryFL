@@ -5,13 +5,14 @@
 import copy
 import torch
 from torch import nn
+import torch.utils.data 
 from client.base.baseTrainer import BaseTrainer
 
 class fedproxTrainer(BaseTrainer):
-    def __init__(self, model,dataloader,criterion, optimizer, args, mu=0.5):
+    def __init__(self, model: nn.Module, dataloader: torch.utils.data.DataLoader, criterion, args: dict, mu:int =0.5):
         #这里可能要多额外保存一个global model供fedprox使用
         #同样训练时critertion就加入fedprox的近端项即可，这个近端项的计算可以写成一个额外的函数
-        super().__init__(model, dataloader, criterion, optimizer, args)
+        super().__init__(model, dataloader, criterion, args)
         self.mu = mu
         self.criterion = torch.nn.CrossEntropyLoss()
     def _train_epoch(self, epoch):

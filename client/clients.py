@@ -7,7 +7,7 @@ import torch
 from copy import deepcopy
 from typing import OrderedDict
 
-class client:
+class Client:
     '''
     Client base class for a client in federated learning
 
@@ -45,7 +45,7 @@ class client:
     def train(self):
         return
 
-class BaseClient(client):
+class BaseClient(Client):
     def train(self):
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),torch.optim.SGD,self.args)
         cal.train(self.num_steps)
