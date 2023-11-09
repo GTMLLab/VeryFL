@@ -27,8 +27,9 @@ global_args = {
 train_args = {
     'optimizer': 'SGD',
     'device': 'cuda',
-    'lr':1e-4,
-    'weight_decay':1e-5,  
+    'lr': 1e-4,
+    'weight_decay': 1e-5,  
+    'num_steps': 1,
 }
 class Task:
     '''
@@ -63,13 +64,13 @@ class Task:
         logger.info("Constructing dataloader with batch size %d", global_args.get('batch_size'))
         batch_size = self.global_args.get('batch_size')
         batch_size = 8 if (batch_size is None) else batch_size
-        self.train_dataset = DataLoader(dataset=self.train_dataset,batch_size=batch_size,shuffle=True)
-        self.test_dataloader = DataLoader(dataset=self.test_dataset,batch_size=batch_size,shuffle=True)
+        self.train_dataset = DataLoader(dataset=self.train_dataset, batch_size=batch_size, shuffle=True)
+        self.test_dataloader = DataLoader(dataset=self.test_dataset, batch_size=batch_size, shuffle=True)
     
     def construct_client(self):
         for i in range(self.global_args['client_num']):
             client_id = chain_proxy.client_regist()
-            new_client = BaseClient(client_id,self.test_dataloader,self.model,self.trainer,1,train_args)
+            new_client = BaseClient(client_id, self.test_dataloader, self.model, self.trainer, train_args)
             self.client_pool.append(new_client) 
     
     def run(self):
@@ -77,7 +78,7 @@ class Task:
         self.construct_client()
         for i in range(self.global_args['communication_round']):
             for client in self.client_pool:
-                print(client.train())
+                client.train()
             self.server.receive_upload(self.client_pool)
             global_model = self.server.aggregate()
             for client in self.client_pool:

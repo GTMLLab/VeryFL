@@ -32,6 +32,10 @@ class BaseTrainer:
     
     #To adaptive suit all kind of downstream tasks.
     def construct_optimizer(self):
+        if (self.model == None):
+            logger.error("Model missing")
+            raise Exception("Model missing")
+        
         logger.info(f"Constructing Optimizer {self.args['optimizer']}")
         if self.args['optimizer'] == "SGD":
             self.optimizer = torch.optim.SGD(

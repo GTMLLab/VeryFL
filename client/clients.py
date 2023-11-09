@@ -1,11 +1,15 @@
 #This implement the client class aims to intergate the trainging process.
 from abc import abstractmethod
+import logging
+
 from client.base.baseTrainer import BaseTrainer
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch
 from copy import deepcopy
 from typing import OrderedDict
+
+logger = logging.getLogger(__name__)
 
 class Client:
     '''
@@ -22,15 +26,15 @@ class Client:
         dataloader: DataLoader,
         model: nn.Module,
         trainer: BaseTrainer,
-        num_steps: int = 1,
         args: dict = {},
+        test_dataloader: DataLoader = None,
     ) -> None:
         self.model = deepcopy(model)
         self.client_id = client_id
         self.dataloader = dataloader
         self.trainer = trainer
         self.args = args
-        self.num_steps = num_steps
+        self.test_dataloader = test_dataloader
     
     def set_model(self, model: nn.Module) -> None:
         self.model = deepcopy(model)
@@ -41,12 +45,45 @@ class Client:
     def get_model_state_dict(self) -> OrderedDict:
         return self.model.state_dict()
     
+    def test(self) -> dict:
+        #test routine for image classification 
+        if (self.test_dataloader == None):
+            logger.warn("No test data")
+            return 
+        self.model.eval()
+        total_loss = 0
+        correct = 0
+        num_data = 0
+        predict_label = torch.tensor([]).to(self.args['device'])
+        true_label = torch.tensor([]).to(self.args['device'])
+        for batch_id, batch in enumerate(self.test_dataloader):
+            data, targets = batch
+            data, targets = data.to(self.args['device']), targets.to(self.args['device'])
+            true_label = torch.cat((true_label, targets), 0)
+            output = self.model(data)
+            total_loss += torch.nn.functional.cross_entropy(output, targets,
+                                                            reduction='sum').item()  # sum up batch loss
+            # get the index of the max log-probability
+            pred = output.data.max(1)[1]
+            predict_label = torch.cat((predict_label, pred), 0)
+            correct += pred.eq(targets.data.view_as(pred)).cpu().sum().item()
+            num_data += output.size(0)
+        acc = 100.0 * (float(correct) / float(num_data))
+        total_l = total_loss / float(num_data)
+        
+        print('___Test : epoch: {}: Average loss: {:.4f}, '
+              'Accuracy: {}/{} ({:.4f}%)'
+              .format(epoch, total_l,
+                                    correct, num_data, acc
+                                ))
+        return ret
     @abstractmethod
     def train(self):
         return
 
 class BaseClient(Client):
     def train(self):
-        cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),torch.optim.SGD,self.args)
-        cal.train(self.num_steps)
+        
+        cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
+        cal.train(self.args.get('num_steps'))
         return

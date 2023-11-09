@@ -1,8 +1,11 @@
 import copy
+import logging
+
 import torch
 from torch import nn
 from client.base.baseTrainer import BaseTrainer
 
+logger = logging.getLogger(__name__)
 
 class normalTrainer(BaseTrainer):
     def __init__(self, model,dataloader,criterion, optimizer, args={}):
@@ -25,20 +28,6 @@ class normalTrainer(BaseTrainer):
                 weight_decay=args["weight_decay"],
                 lr=args["lr"],
             )
-        # if self.optimizer == "sgd":
-        #     optimizer = torch.optim.SGD(
-        #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         weight_decay=args["weight_decay"],
-        #         lr=args["lr"],
-        #     )
-        # else:
-        #     optimizer = torch.optim.Adam(
-        #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         lr=args["lr"],
-        #         weight_decay=args["weight_decay"],
-        #         amsgrad=True,
-        #     )
-
         batch_loss = []
         for _, (x, labels) in enumerate(self.dataloader):
             x, labels = x.to(device), labels.to(device)
@@ -72,8 +61,10 @@ class normalTrainer(BaseTrainer):
             epoch_loss = 0.0
         else:
             epoch_loss = (sum(batch_loss) / len(batch_loss))
-        return {
-            "Client Index = {}\tEpoch: {}\tLoss: {:.6f}".format(
-                self.id, epoch, epoch_loss
-            )
-        }
+        
+        ret = dict()
+        ret['client_id'] = self.id
+        ret['epoch'] = epoch 
+        ret['loss'] = epoch_loss
+        logger.info(f"client id {self.id} with inner epoch {epoch}, Loss: {epoch_loss}")
+        return ret

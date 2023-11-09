@@ -3,10 +3,14 @@
 #即主要去复写_train_epoch 方法即可，该函数的接口和返回形式可以在注释中看到，
 #有问题联系我
 import copy
+import logging
+
 import torch
 from torch import nn
 import torch.utils.data 
 from client.base.baseTrainer import BaseTrainer
+
+logger = logging.getLogger(__name__)
 
 class fedproxTrainer(BaseTrainer):
     def __init__(self, model: nn.Module, dataloader: torch.utils.data.DataLoader, criterion, args: dict, mu:int =0.5):
@@ -15,8 +19,10 @@ class fedproxTrainer(BaseTrainer):
         super().__init__(model, dataloader, criterion, args)
         self.mu = mu
         self.criterion = torch.nn.CrossEntropyLoss()
+        
     def _train_epoch(self, epoch):
-
+        #FedProx Algorithm
+        
         model = self.model
         args = self.args
         device = args["device"]
@@ -25,34 +31,13 @@ class fedproxTrainer(BaseTrainer):
         model.train()
 
         previous_model = copy.deepcopy(model.state_dict())
-
-        # train and update
-        optimizer = self.optimizer(
-            filter(lambda p: p.requires_grad, self.model.parameters()),
-                weight_decay=args["weight_decay"],
-                lr=args["lr"],
-            )
-        # if self.optimizer == "sgd":
-        #     optimizer = torch.optim.SGD(
-        #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         weight_decay=args["weight_decay"],
-        #         lr=args["lr"],
-        #     )
-        # else:
-        #     optimizer = torch.optim.Adam(
-        #         filter(lambda p: p.requires_grad, self.model.parameters()),
-        #         lr=args["lr"],
-        #         weight_decay=args["weight_decay"],
-        #         amsgrad=True,
-        #     )
-
+        optimizer = self.optimizer
         batch_loss = []
         for _, (x, labels) in enumerate(self.dataloader):
             x, labels = x.to(device), labels.to(device)
             model.zero_grad()
             log_probs = model(x)
             loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
-            # if args.fedprox:
             fed_prox_reg = 0.0
             for name, param in model.named_parameters():
                 fed_prox_reg += ((self.mu / 2) * \
@@ -79,9 +64,10 @@ class fedproxTrainer(BaseTrainer):
             epoch_loss = 0.0
         else:
             epoch_loss = (sum(batch_loss) / len(batch_loss))
-        print(epoch_loss)
-        return {
-            "Client Index = {}\tEpoch: {}\tLoss: {:.6f}".format(
-                self.id, epoch, epoch_loss
-            )
-        }
+            
+        ret = dict()
+        ret['client_id'] = self.id
+        ret['epoch'] = epoch 
+        ret['loss'] = epoch_loss
+        logger.info(f"client id {self.id} with inner epoch {epoch}, Loss: {epoch_loss}")
+        return ret

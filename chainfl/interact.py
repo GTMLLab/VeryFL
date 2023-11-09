@@ -23,6 +23,8 @@ def upload():
 
 
 #utils for blockchain
+#The client communicate with the blockchain through chainProxy.
+
 class chainProxy():
     def __init__(self):
         self.upload_params = None
@@ -46,6 +48,7 @@ class chainProxy():
     def watermark_negotitaion(self,client_id:str,watermark_length=64):
         client_id = int(client_id)
         self.watermark_proxy.generateWatermark({'from':accounts[client_id]})
+    
     def upload_model(self,upload_params:dict):
         '''
         This function recieve a dict and the value in this dict must be the type which json can serilized
