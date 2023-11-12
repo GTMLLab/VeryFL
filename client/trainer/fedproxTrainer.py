@@ -65,9 +65,4 @@ class fedproxTrainer(BaseTrainer):
         else:
             epoch_loss = (sum(batch_loss) / len(batch_loss))
             
-        ret = dict()
-        ret['client_id'] = self.id
-        ret['epoch'] = epoch 
-        ret['loss'] = epoch_loss
-        logger.info(f"client id {self.id} with inner epoch {epoch}, Loss: {epoch_loss}")
-        return ret
+        return epoch_loss

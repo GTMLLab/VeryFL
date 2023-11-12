@@ -45,7 +45,14 @@ class Client:
     def get_model_state_dict(self) -> OrderedDict:
         return self.model.state_dict()
     
-    def test(self) -> dict:
+    def test(self, epoch: int) -> dict:
+        '''
+        return dict
+        : client_id
+          epoch
+          loss
+          acc
+        '''
         #test routine for image classification 
         if (self.test_dataloader == None):
             logger.warn("No test data")
@@ -70,20 +77,20 @@ class Client:
             num_data += output.size(0)
         acc = 100.0 * (float(correct) / float(num_data))
         total_l = total_loss / float(num_data)
-        
-        print('___Test : epoch: {}: Average loss: {:.4f}, '
-              'Accuracy: {}/{} ({:.4f}%)'
-              .format(epoch, total_l,
-                                    correct, num_data, acc
-                                ))
+        ret = dict()
+        ret['client_id'] = self.client_id
+        ret['epoch'] = epoch
+        ret['loss'] = total_l
+        ret['acc'] = acc
+        logger.info(f"client id {self.client_id} with inner epoch {ret['epoch']}, Loss: {total_l}, Acc: {acc}")
         return ret
     @abstractmethod
-    def train(self):
+    def train(self, epoch: int):
         return
 
 class BaseClient(Client):
-    def train(self):
-        
+    def train(self, epoch: int):    
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
-        cal.train(self.args.get('num_steps'))
+        avg_loss = cal.train(self.args.get('num_steps'))
+        logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss} ")
         return

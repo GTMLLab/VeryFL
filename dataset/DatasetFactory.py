@@ -17,7 +17,13 @@ class DatasetFactory:
     def __init__(self,)->None:
         return
     def get_dataset(self, dataset:str, train:bool = True)->Dataset:
-        #now dataset could be: FashionMINST, CIFAR...
+        """
+        Now Support 4 Datasets:
+        1. FashionMNIST
+        2. CIFAR10
+        3. CIFAR100
+        4. EMNIST
+        """
         if dataset == 'FashionMNIST':
             return get_fashionmnist(train = train)
         elif dataset == 'CIFAR10':

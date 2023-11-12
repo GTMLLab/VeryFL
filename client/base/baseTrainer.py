@@ -36,7 +36,7 @@ class BaseTrainer:
             logger.error("Model missing")
             raise Exception("Model missing")
         
-        logger.info(f"Constructing Optimizer {self.args['optimizer']}")
+        logger.info(f"Constructing Optimizer {self.args['optimizer']}: lr {self.args['lr']}, weight_decay: {self.args['weight_decay']}")
         if self.args['optimizer'] == "SGD":
             self.optimizer = torch.optim.SGD(
                 filter(lambda p: p.requires_grad, self.model.parameters()),
@@ -50,7 +50,7 @@ class BaseTrainer:
                 weight_decay = self.args["weight_decay"],
                 amsgrad=True,
             )
-        else : 
+        else: 
             logger.error(f"Unknow Optimizer type {self.args['optimizer']}")
             raise Exception(f"Unknow Optimizer type {self.args['optimizer']}")
     @abstractmethod
@@ -76,13 +76,13 @@ class BaseTrainer:
         Full training logic
         """
         self.construct_optimizer()
-        log = []
+        
+        avg_loss = 0
+        
         for epoch in range(self.start_epoch,total_epoch):
-            result = self._train_epoch(epoch)
-            log.append(result)
-            #response = self._upload_model(epoch)
-            #self._download_model(epoch)
-        return log
+            avg_loss += self._train_epoch(epoch)
+        avg_loss /= total_epoch
+        return avg_loss
     
     @abstractmethod
     def _on_before_upload(self,epoch):

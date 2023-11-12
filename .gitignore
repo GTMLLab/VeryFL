@@ -5,3 +5,4 @@ chainEnv/tests/
 chainEnv/contracts/FedAvg
 chainEnv/interfaces/
 chainEnv/scripts/
+*.log

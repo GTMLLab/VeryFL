@@ -1,4 +1,4 @@
-#use with cifar 10
+#use with FashionMnist
 import torch.nn as nn
 class simpleCNN(nn.Module):
     def __init__(self,class_num):
@@ -17,4 +17,5 @@ class simpleCNN(nn.Module):
     def forward(self,x):
         logits = self.linear_relu_stack(x)
         return logits
+
 def get_simple_cnn(class_num): return simpleCNN(class_num)

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Dict, OrderedDict
-from client.clients import client
+from client.clients import Client
 class ServerAggregator(ABC):
     """Abstract base class for federated learning trainer.
     
@@ -18,7 +18,7 @@ class ServerAggregator(ABC):
         self.model_pool = []
     def set_id(self, aggregator_id):
         self.id = aggregator_id
-    def receive_upload(self,client_pool:List[client]):
+    def receive_upload(self,client_pool:List[Client]):
         for client in client_pool:
             self.model_pool.append(client.get_model_state_dict())
         

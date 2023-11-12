@@ -2,6 +2,7 @@
 include the upload and the download method for client to interact with the blockchain.
 '''
 from util import jsonFormat
+from collections import defaultdict
 from brownie import *
 import string
 import json
@@ -32,8 +33,15 @@ class chainProxy():
         self.watermark_proxy = watermarkNegotiation[0]
         self.server_accounts = accounts[0]
         self.client_num = 0
+        self.client_list = defaultdict(type(accounts[0].address))
         # blockchain_init
-        
+    def get_account_num(self):
+        return self.account_num
+    
+    def get_client_list(self):
+        return self.client_list    
+    
+    
     def add_account(self)->str:
         account = accounts.add()
         self.account_num += 1
@@ -43,6 +51,7 @@ class chainProxy():
     def client_regist(self)->str:
         self.client_num += 1
         if(self.account_num<self.client_num):self.add_account()
+        self.client_list[str(self.client_num)] = accounts[self.client_num]
         return str(self.client_num) 
     
     def watermark_negotitaion(self,client_id:str,watermark_length=64):

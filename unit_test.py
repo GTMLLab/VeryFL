@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 import torch.nn as nn
 import torch
-
+from collections import defaultdict
 
 if __name__ =="__main__":
     #-----------Unit test for serverSimulator.py----------------
@@ -13,30 +13,30 @@ if __name__ =="__main__":
     #2. The Factory of aggregator for user to choose the fl algorithm (TODO)
     #3. Args passed into the server.
     #4. 
-    from server.serverSimulator import serverSimulator
-    from server.base.baseAggregator import ServerAggregator 
-    import torch.nn as nn
-    class LinearModel(nn.Module):
-        def __init__(self, h_dims):
-            super(LinearModel,self).__init__()
+    # from server.serverSimulator import serverSimulator
+    # from server.base.baseAggregator import ServerAggregator 
+    # import torch.nn as nn
+    # class LinearModel(nn.Module):
+    #     def __init__(self, h_dims):
+    #         super(LinearModel,self).__init__()
 
-            models = []
-            for i in range(len(h_dims) - 1):
-                models.append(nn.Linear(h_dims[i], h_dims[i + 1]))
-                if i != len(h_dims) - 2:
-                    models.append(nn.ReLU()) 
-            self.models = nn.Sequential(*models)
-        def forward(self, X):
-            return self.models(X)
+    #         models = []
+    #         for i in range(len(h_dims) - 1):
+    #             models.append(nn.Linear(h_dims[i], h_dims[i + 1]))
+    #             if i != len(h_dims) - 2:
+    #                 models.append(nn.ReLU()) 
+    #         self.models = nn.Sequential(*models)
+    #     def forward(self, X):
+    #         return self.models(X)
     
-    test_sample_pool = [LinearModel([10,10]) for i in range(10)]
-    a = ServerAggregator()
-    server = serverSimulator(a)
-    ab = server.download_model()
-    print(ab)
-    for i in test_sample_pool:
-        upload_param = {'state_dict': i.state_dict()}
-        server.upload_model(upload_param)
+    # test_sample_pool = [LinearModel([10,10]) for i in range(10)]
+    # a = ServerAggregator()
+    # server = serverSimulator(a)
+    # ab = server.download_model()
+    # print(ab)
+    # for i in test_sample_pool:
+    #     upload_param = {'state_dict': i.state_dict()}
+    #     server.upload_model(upload_param)
 
 
     #-----------Unit test for client.py----------------
@@ -79,3 +79,15 @@ if __name__ =="__main__":
     #                          criterion=loss_fn,
     #                          optimizer=optimizer,
     #                          config=config)
+    
+    #-----------Unit test DataSpliter.py----------------
+    from dataset.DatasetFactory import DatasetFactory
+    from dataset.DatasetSpliter import DatasetSpliter
+    dataset = DatasetFactory().get_dataset("FashionMNIST")
+    client_list = defaultdict(int)
+    client_list["1"] = 1
+    client_list["2"] = 2    
+    client_list["3"] = 3
+    client_list["4"] = 4   
+    
+    dataloaders = DatasetSpliter().dirichlet_split(dataset, client_list)
