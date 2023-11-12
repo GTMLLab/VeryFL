@@ -45,20 +45,7 @@ class fedproxTrainer(BaseTrainer):
             loss += fed_prox_reg
 
             loss.backward()
-
-            # Uncommet this following line to avoid nan loss
-            # torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-
             optimizer.step()
-            # logging.info(
-            #     "Update Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
-            #         epoch,
-            #         (batch_idx + 1) * args.batch_size,
-            #         len(train_data) * args.batch_size,
-            #         100.0 * (batch_idx + 1) / len(train_data),
-            #         loss.item(),
-            #     )
-            # )
             batch_loss.append(loss.item())
         if len(batch_loss) == 0:
             epoch_loss = 0.0

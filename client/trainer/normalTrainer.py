@@ -20,8 +20,6 @@ class normalTrainer(BaseTrainer):
         model.to(device)
         model.train()
 
-        previous_model = copy.deepcopy(model.state_dict())
-
         # train and update
         optimizer = self.optimizer(
             filter(lambda p: p.requires_grad, self.model.parameters()),
@@ -36,10 +34,10 @@ class normalTrainer(BaseTrainer):
             loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
             # if args.fedprox:
             fed_prox_reg = 0.0
-            for name, param in model.named_parameters():
-                fed_prox_reg += ((self.mu / 2) * \
-                                 torch.norm((param - previous_model[name].data.to(device))) ** 2)
-            loss += fed_prox_reg
+            # for name, param in model.named_parameters():
+            #     fed_prox_reg += ((self.mu / 2) * \
+            #                      torch.norm((param - previous_model[name].data.to(device))) ** 2)
+            # loss += fed_prox_reg
 
             loss.backward()
 
@@ -47,15 +45,6 @@ class normalTrainer(BaseTrainer):
             # torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
 
             optimizer.step()
-            # logging.info(
-            #     "Update Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
-            #         epoch,
-            #         (batch_idx + 1) * args.batch_size,
-            #         len(train_data) * args.batch_size,
-            #         100.0 * (batch_idx + 1) / len(train_data),
-            #         loss.item(),
-            #     )
-            # )
             batch_loss.append(loss.item())
         if len(batch_loss) == 0:
             epoch_loss = 0.0

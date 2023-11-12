@@ -1,6 +1,7 @@
 from .resnet import ResNet18
 from .alexnet import createAlexNet
 from .simple_cnn import get_simple_cnn
+from .SignAlexNet import get_sign_alexnet
 import logging 
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,13 @@ class ModelFactory:
             return createAlexNet(class_num)
         elif model == 'simpleCNN':
             return get_simple_cnn(class_num)
+        else:
+            logger.error("ModelFactory received an unknown model %s", model)
+            raise Exception(f"Unrecognized Model")
+    
+    def get_sign_model(self, model, class_num, in_channels, watermark_args):
+        if model == 'SignAlexNet':
+            return get_sign_alexnet(class_num, in_channels, watermark_args)
         else:
             logger.error("ModelFactory received an unknown model %s", model)
             raise Exception(f"Unrecognized Model")

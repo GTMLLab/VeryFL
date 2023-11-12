@@ -6,7 +6,11 @@ from collections import defaultdict
 from brownie import *
 import string
 import json
+import logging
 
+import torch
+
+logger = logging.getLogger(__name__)
 
 #chain init
 p = project.load(project_path="chainEnv",name="chainServer")
@@ -70,7 +74,7 @@ class chainProxy():
         self.upload_params = upload_params
         return 
     
-    def download_model(self,params=None):
+    def download_model(self, params = None):
         '''
         从区块链上接受json格式的字符串为全局模型并下载。
         但会返回一个orderdict作为全局模型的state_dict
@@ -79,4 +83,45 @@ class chainProxy():
         download_params['state_dict']  = jsonFormat.json2model(download_params['state_dict'])   
         return download_params
 
+    def construct_sign(self, args: dict = {}):
+        sign_config = args.get('sign_config')
+        model_name  = args.get('model')
+        bit_length  = args.get('bit_length')
+        
+        if model_name != "SignAlexNet":
+            logger.error("Watermark Not Support for this network")
+            raise Exception("Watermark Not Support for this network")
+        
+        watermark_args = dict()
+        alexnet_channels = {
+        '4': (384, 3456),
+        '5': (256, 2304),
+        '6': (256, 2304)
+        }
+        
+        for layer_key in sign_config:
+            flag = sign_config[layer_key]
+            b = flag if isinstance(flag, str) else None
+            if b is not None:
+                flag = True
+            watermark_args[layer_key] = {
+                'flag': flag
+            }
+
+            if b is not None:
+                if layer_key == "4":
+                    output_channels = int (bit_length * 384 / 896)
+                if layer_key == "5":
+                    output_channels = int (bit_length * 256/ 896)
+                if layer_key == "6":
+                    output_channels = int (bit_length * 256/ 896)
+
+            b = torch.sign(torch.rand(output_channels) - 0.5)
+            M = torch.randn(alexnet_channels[layer_key][0], output_channels)
+
+            watermark_args[layer_key]['b'] = b
+            watermark_args[layer_key]['M'] = M
+
+        return watermark_args  
+    
 chain_proxy = chainProxy()

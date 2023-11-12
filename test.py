@@ -58,6 +58,29 @@ class Task:
                                                                    batch_size  = batch_size)
         self.test_dataloader = DataLoader(dataset=self.test_dataset, batch_size=batch_size, shuffle=True)
     
+    def construct_sign(self):
+        self.keys = list()
+        tmp = list()
+        for i in range(self.global_args.get('client_num')):
+            if i < self.global_args.get('sign_num'):
+                tmp.append(1)
+            else : tmp.append(0)
+        
+        for i in range(self.global_args.get('client_num')):
+            if tmp[i] == 1:
+                key = chain_proxy().construct_sign(self.global_args)
+                self.keys.append(key)
+            else :
+                self.keys.append(None)
+        self.keys_dict = dict()
+        
+        #Project the watermake to the client TODO work with the blockchain
+        for ind, (client_id,_) in enumerate(self.client_list.items()):
+            self.keys_dict[client_id] = self.keys[ind]
+        
+        self.model = ModelFactory().get_sign_model()      
+        
+        
     def construct_client(self):
         #Regist Client to Blockchain
         for i in range(self.global_args['client_num']):

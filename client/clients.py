@@ -94,3 +94,12 @@ class BaseClient(Client):
         avg_loss = cal.train(self.args.get('num_steps'))
         logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss} ")
         return
+    
+
+class SignClient(Client):
+    def sign_test(self, kwargs, ind):
+        self.model.eval()
+        avg = 0
+        count = 0 
+        with torch.no_grad():
+            return

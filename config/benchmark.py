@@ -53,3 +53,29 @@ class CIFAR10(BenchMark):
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }
+
+class Sign(BenchMark):
+    def __init__(self):
+        super(CIFAR10,self).__init__('CIFAR10')
+        self.global_args = {
+            'client_num': 10,
+            'sign_num' : 10,
+            'model': 'SignAlexNet',
+            'sign_config': {'0': False, '2': False, '4': 'signature', '5': 'signature', '6': 'signature'},
+            'bit_length' : 40,
+            'dataset': 'CIFAR10',
+            'batch_size': 32,
+            'class_num': 10,
+            'data_folder': './data',
+            'communication_round': 200,
+            'non-iid': False,
+            'alpha': 1,
+            'sign' : True,
+        }
+        self.train_args = {
+            'optimizer': 'SGD',
+            'device': 'cuda',
+            'lr': 1e-3,
+            'weight_decay': 1e-5,  
+            'num_steps': 1,
+        }
