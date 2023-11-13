@@ -28,6 +28,7 @@ class Client:
         trainer: BaseTrainer,
         args: dict = {},
         test_dataloader: DataLoader = None,
+        watermarks: dict = {},
     ) -> None:
         self.model = deepcopy(model)
         self.client_id = client_id
@@ -35,7 +36,8 @@ class Client:
         self.trainer = trainer
         self.args = args
         self.test_dataloader = test_dataloader
-    
+        self.watermarks = watermarks
+        
     def set_model(self, model: nn.Module) -> None:
         self.model = deepcopy(model)
         
@@ -84,6 +86,7 @@ class Client:
         ret['acc'] = acc
         logger.info(f"client id {self.client_id} with inner epoch {ret['epoch']}, Loss: {total_l}, Acc: {acc}")
         return ret
+    
     @abstractmethod
     def train(self, epoch: int):
         return
@@ -91,7 +94,8 @@ class Client:
 class BaseClient(Client):
     def train(self, epoch: int):    
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
-        avg_loss = cal.train(self.args.get('num_steps'))
+        ret = cal.train(self.args.get('num_steps'))
+        avg_loss = ret['loss']
         logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss} ")
         return
     
@@ -103,3 +107,11 @@ class SignClient(Client):
         count = 0 
         with torch.no_grad():
             return
+    
+    def train(self, epoch: int, watermarks: dict = None):
+        cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(), self.args, self.watermarks)
+        ret = cal.train(self.args.get('num_steps'))
+        avg_loss = ret['loss']
+        sign_loss = ret['sign_loss']
+        logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss}, Sign Loss: {sign_loss}")
+        

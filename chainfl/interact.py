@@ -116,11 +116,11 @@ class chainProxy():
                 if layer_key == "6":
                     output_channels = int (bit_length * 256/ 896)
 
-            b = torch.sign(torch.rand(output_channels) - 0.5)
-            M = torch.randn(alexnet_channels[layer_key][0], output_channels)
+                b = torch.sign(torch.rand(output_channels) - 0.5)
+                M = torch.randn(alexnet_channels[layer_key][0], output_channels)
 
-            watermark_args[layer_key]['b'] = b
-            watermark_args[layer_key]['M'] = M
+                watermark_args[layer_key]['b'] = b
+                watermark_args[layer_key]['M'] = M
 
         return watermark_args  
     

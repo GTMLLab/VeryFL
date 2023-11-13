@@ -10,11 +10,11 @@ from model.SignAlexNet import SignAlexNet
 logger = logging.getLogger(__name__)
 
 class SignTrainer(BaseTrainer):
-    def __init__(self, model,dataloader,criterion, optimizer, args={}, keys={}):
-        super().__init__(model, dataloader, criterion, optimizer, args)
+    def __init__(self, model,dataloader,criterion, optimizer, args={}, watermarks={}):
+        super().__init__(model, dataloader, criterion, optimizer, args, watermarks)
         self.criterion = torch.nn.CrossEntropyLoss()
-        self.keys = keys
         self.ind = 0
+        
     def _train_epoch(self, epoch):
 
         model = self.model
@@ -38,8 +38,8 @@ class SignTrainer(BaseTrainer):
             log_probs = model(x)
             loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
             sign_loss = torch.tensor(0.).to(device)
-            if(self.keys is not None):
-                sign_loss += SignLoss(self.keys, self.model, self.ind).get_loss() 
+            if(self.watermarks is not None):
+                sign_loss += SignLoss(self.watermarks, self.model, self.ind).get_loss() 
             (loss + sign_loss).backward()
 
             # Uncommet this following line to avoid nan loss

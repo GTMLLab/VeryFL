@@ -51,5 +51,7 @@ class fedproxTrainer(BaseTrainer):
             epoch_loss = 0.0
         else:
             epoch_loss = (sum(batch_loss) / len(batch_loss))
-            
-        return epoch_loss
+        
+        ret = dict()
+        ret['loss'] = epoch_loss 
+        return ret

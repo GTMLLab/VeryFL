@@ -13,7 +13,7 @@ class ModelFactory:
     '''
     def __init__(self,)->None:
         return
-    def get_model(self,model,class_num):
+    def get_model(self, model, class_num, args={}):
         #now model could be: resnet, alexnet, ...
         if model == 'resnet':
             return ResNet18(class_num)
@@ -22,7 +22,8 @@ class ModelFactory:
         elif model == 'simpleCNN':
             return get_simple_cnn(class_num)
         else:
-            logger.error("ModelFactory received an unknown model %s", model)
+            logger.warn("ModelFactory received an unknown model %s", model)
+            return None
             raise Exception(f"Unrecognized Model")
     
     def get_sign_model(self, model, class_num, in_channels, watermark_args):

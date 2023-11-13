@@ -12,7 +12,7 @@ class BaseTrainer:
     Base class for all trainers.
     Each client trainer need to complement the method below.
     """
-    def __init__(self, model, dataloader,criterion, args={}):
+    def __init__(self, model, dataloader,criterion, args={}, watermarks = {}):
         '''
         :param
         model:     Pass the init model to this trainer
@@ -23,7 +23,7 @@ class BaseTrainer:
         self.args = args
         self.model = model
         self.criterion = criterion
-        
+        self.watermarks = watermarks
         #Communication Channel
         self.pipe = chainProxy()
         self.id = args.get("client_id") 

@@ -56,7 +56,7 @@ class CIFAR10(BenchMark):
 
 class Sign(BenchMark):
     def __init__(self):
-        super(CIFAR10,self).__init__('CIFAR10')
+        super(Sign,self).__init__('Sign')
         self.global_args = {
             'client_num': 10,
             'sign_num' : 10,
@@ -64,6 +64,7 @@ class Sign(BenchMark):
             'sign_config': {'0': False, '2': False, '4': 'signature', '5': 'signature', '6': 'signature'},
             'bit_length' : 40,
             'dataset': 'CIFAR10',
+            'in_channels': 3,
             'batch_size': 32,
             'class_num': 10,
             'data_folder': './data',
