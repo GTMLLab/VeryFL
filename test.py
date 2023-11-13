@@ -74,7 +74,7 @@ class Task:
                 self.keys.append(None)
         self.keys_dict = dict()
         
-        #Project the watermake to the client TODO work with the blockchain
+        #Project the watermake to the client TODO work with the blockchain                      
         for ind, (client_id,_) in enumerate(self.client_list.items()):
             self.keys_dict[client_id] = self.keys[ind]
         
@@ -111,5 +111,4 @@ if __name__=="__main__":
                                train_args=train_args,
                                )
     classification_task.run()
-
 
