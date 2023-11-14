@@ -47,6 +47,20 @@ class Client:
     def get_model_state_dict(self) -> OrderedDict:
         return self.model.state_dict()
     
+    def show_train_result(self, epoch: int, ret_list: list):
+        #get the ret_list from trainer and show the trainig result
+        
+        #Info Head
+        logger.info(f"Epoch: {epoch}, client id {self.client_id}",)
+        
+        for ind, ret in enumerate(ret_list):
+            result = f"Inner Epoch: {ind} "
+            for key, value in ret.items():
+                result += f"{key}: {value} "
+            logger.info(result)
+        
+        return
+        
     def test(self, epoch: int) -> dict:
         '''
         return dict
@@ -92,11 +106,12 @@ class Client:
         return
 
 class BaseClient(Client):
+    
     def train(self, epoch: int):    
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
-        ret = cal.train(self.args.get('num_steps'))
-        avg_loss = ret['loss']
-        logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss} ")
+        ret_list = cal.train(self.args.get('num_steps'))
+        
+        self.show_train_result(epoch, ret_list)
         return
     
 
@@ -110,8 +125,10 @@ class SignClient(Client):
     
     def train(self, epoch: int, watermarks: dict = None):
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(), self.args, self.watermarks)
-        ret = cal.train(self.args.get('num_steps'))
-        avg_loss = ret['loss']
-        sign_loss = ret['sign_loss']
-        logger.info(f"Epoch: {epoch}, client id {self.client_id}, Loss: {avg_loss}, Sign Loss: {sign_loss}")
+        ret_list = cal.train(self.args.get('num_steps'))
+        self.show_train_result(epoch, ret_list)
+        # avg_loss = ret['loss']
+        # sign_loss = ret['sign_loss']
+        # Loss: {avg_loss}, Sign Loss: {sign_loss}")
+        return 
         

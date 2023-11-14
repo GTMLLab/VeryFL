@@ -10,8 +10,8 @@ from model.SignAlexNet import SignAlexNet
 logger = logging.getLogger(__name__)
 
 class SignTrainer(BaseTrainer):
-    def __init__(self, model,dataloader,criterion, optimizer, args={}, watermarks={}):
-        super().__init__(model, dataloader, criterion, optimizer, args, watermarks)
+    def __init__(self, model, dataloader, criterion, args={}, watermarks={}):
+        super().__init__(model, dataloader, criterion, args, watermarks)
         self.criterion = torch.nn.CrossEntropyLoss()
         self.ind = 0
         
@@ -25,11 +25,6 @@ class SignTrainer(BaseTrainer):
         model.train()
 
         # train and update
-        optimizer = self.optimizer(
-            filter(lambda p: p.requires_grad, self.model.parameters()),
-                weight_decay=args["weight_decay"],
-                lr=args["lr"],
-            )
         batch_loss = []
         batch_sign_loss = []
         for _, (x, labels) in enumerate(self.dataloader):
@@ -45,7 +40,7 @@ class SignTrainer(BaseTrainer):
             # Uncommet this following line to avoid nan loss
             # torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
 
-            optimizer.step()
+            self.optimizer.step()
             batch_loss.append(loss.item())
             batch_sign_loss.append(sign_loss.item())
             

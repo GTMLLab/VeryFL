@@ -4,9 +4,9 @@ logger = logging.getLogger(__name__)
 from torch.utils.data import DataLoader
 
 from server.aggregation_alg.fedavg import fedavgAggregator
-from client.clients import Client,BaseClient
+from client.clients import Client, BaseClient, SignClient
 from client.trainer.fedproxTrainer import fedproxTrainer
-
+from client.trainer.SignTrainer import SignTrainer
 from model.ModelFactory import ModelFactory
 from dataset.DatasetFactory import DatasetFactory
 from dataset.DatasetSpliter import DatasetSpliter
@@ -25,21 +25,23 @@ class Task:
         self.train_args = train_args
         
         self.model = None
+        
         #Get Dataset
         # TODO pass the schema (object) instead of args directly.  
         logger.info("Constructing dataset %s from dataset Factory", global_args.get('dataset'))
         self.train_dataset = DatasetFactory().get_dataset(global_args.get('dataset'),True)
         self.test_dataset =  DatasetFactory().get_dataset(global_args.get('dataset'),False)
-        
-        #Get Server
-        logger.info("Constructing Server from aggergator: Fedavg server")
-        self.server = fedavgAggregator()
-        
         #Get Model
         logger.info("Constructing Model from model factory with model %s and class_num %d", global_args['model'], global_args['class_num'])
         self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'))
+        
+        #FL alg
+        logger.info("Algorithm: FedProx")
+        self.server = fedavgAggregator()
+        self.trainer = SignTrainer
+    
+        
         #Get Client and Trainer
-        self.trainer = fedproxTrainer
         self.client_list = None
         self.client_pool : list[Client] = []
         
@@ -90,7 +92,8 @@ class Task:
     
     def _construct_client(self):
         for client_id, _ in self.client_list.items():
-            new_client = BaseClient(client_id, self.train_dataloader_list[client_id], self.model, self.trainer, self.train_args, self.test_dataloader, self.keys[client_id])
+            new_client = SignClient(client_id, self.train_dataloader_list[client_id], self.model, 
+                                    self.trainer, self.train_args, self.test_dataloader, self.keys_dict[client_id])
             self.client_pool.append(new_client)
     
     def run(self):

@@ -58,7 +58,8 @@ class DatasetSpliter:
             indices = split_list[client_id]
             this_dataloader = DataLoader(dataset    = dataset,
                                          batch_size = batch_size,
-                                         sampler    = SubsetRandomSampler(indices))
+                                         sampler    = SubsetRandomSampler(indices),
+                                         num_workers= 4)
             dataloaders[client_id] = this_dataloader 
         
         return dataloaders

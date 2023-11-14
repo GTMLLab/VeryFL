@@ -77,12 +77,10 @@ class BaseTrainer:
         """
         self.construct_optimizer()
         
-        avg_loss = 0
-        
+        ret_list = list()
         for epoch in range(self.start_epoch,total_epoch):
-            avg_loss += self._train_epoch(epoch)
-        avg_loss /= total_epoch
-        return avg_loss
+            ret_list.append(self._train_epoch(epoch))  
+        return ret_list
     
     @abstractmethod
     def _on_before_upload(self,epoch):
