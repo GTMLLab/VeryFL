@@ -11,8 +11,6 @@ global_args, train_args = config.benchmark.Sign().get_args()
 if __name__=="__main__":
     logger.info("--training start--")
     logger.info("Get Global args dataset: %s, model: %s",global_args['dataset'], global_args['model'])
-    classification_task = Task(global_args=global_args,
-                               train_args=train_args,
-                               )
+    classification_task = Task(global_args=global_args, train_args=train_args)
     classification_task.run()
 
