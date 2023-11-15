@@ -14,9 +14,9 @@ npm install ganache --global
 Python Environment
 - Anaconda 
 
-Python: 3.6 ~ 3.9
+1. Python: 3.6 ~ 3.9
 
-PyTorch: 1.13
+2. PyTorch: 1.13
 - Brownie
 ```
 pip install eth-brownie
