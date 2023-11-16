@@ -1,18 +1,19 @@
 import logging
-
+from .algorithm import *
 #The list of support choice
 #
 
 
 logger = logging.getLogger(__name__)
+
 class BenchMark:
     def __init__(self, name):
         logger.info("Initializing Benchmark %s", name)
-        self.global_args = {}
-        self.train_args  = {}
-        
+        self.global_args = None
+        self.train_args  = None
+        self.algorithm   = None
     def get_args(self):
-        return self.global_args, self.train_args
+        return self.global_args, self.train_args, self.algorithm
 
 class FashionMNIST(BenchMark):
     def __init__(self):
@@ -35,7 +36,8 @@ class FashionMNIST(BenchMark):
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }
-
+        self.algorithm = FedAvg()
+        
 class CIFAR10(BenchMark):
     def __init__(self):
         super(CIFAR10,self).__init__('CIFAR10')
@@ -57,7 +59,8 @@ class CIFAR10(BenchMark):
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }
-
+        self.algorithm = FedAvg()
+        
 class Sign(BenchMark):
     def __init__(self):
         super(Sign,self).__init__('Sign')
@@ -84,3 +87,4 @@ class Sign(BenchMark):
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }
+        self.algorithm = FedIPR()

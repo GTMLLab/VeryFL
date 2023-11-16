@@ -3,6 +3,7 @@ logger = logging.getLogger(__name__)
 
 from torch.utils.data import DataLoader
 
+from config.algorithm import Algorithm
 from server.aggregation_alg.fedavg import fedavgAggregator
 from client.clients import Client, BaseClient, SignClient
 from client.trainer.fedproxTrainer import fedproxTrainer
@@ -20,10 +21,9 @@ class Task:
     1. Construct (Server, Client)--> FL Algorithm
     3. Process of the dataset 
     '''
-    def __init__(self, global_args: dict, train_args: dict):
+    def __init__(self, global_args: dict, train_args: dict, algorithm: Algorithm):
         self.global_args = global_args
         self.train_args = train_args
-        
         self.model = None
         
         #Get Dataset
@@ -36,10 +36,11 @@ class Task:
         self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'))
         
         #FL alg
-        logger.info("Algorithm: FedProx")
-        self.server = fedavgAggregator()
-        self.trainer = SignTrainer
-    
+        logger.info("Algorithm: {algorithm}")
+        self.server = algorithm.get_server()
+        self.server = self.server()
+        self.trainer = algorithm.get_trainer()
+        self.client = algorithm.get_client()
         
         #Get Client and Trainer
         self.client_list = None
@@ -92,7 +93,7 @@ class Task:
     
     def _construct_client(self):
         for client_id, _ in self.client_list.items():
-            new_client = SignClient(client_id, self.train_dataloader_list[client_id], self.model, 
+            new_client = self.client(client_id, self.train_dataloader_list[client_id], self.model, 
                                     self.trainer, self.train_args, self.test_dataloader, self.keys_dict[client_id])
             self.client_pool.append(new_client)
     
