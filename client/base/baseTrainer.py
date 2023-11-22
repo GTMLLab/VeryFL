@@ -26,7 +26,6 @@ class BaseTrainer:
         self.watermarks = watermarks
         #Communication Channel
         self.pipe = chainProxy()
-        self.id = args.get("client_id") 
         self.start_epoch = 0
     
     
@@ -66,14 +65,16 @@ class BaseTrainer:
                   return result = {
                       'loss' : 1.2222
                       'accuarcy' : 0.99
+                      'sign' : loss
                       ... 
                   }
         """
         pass
 
-    def train(self,total_epoch):
+    def train(self, total_epoch):
         """
         Full training logic
+        return a list of dict including training result of multiple epoch.
         """
         self.construct_optimizer()
         
@@ -125,5 +126,3 @@ class BaseTrainer:
         download_params = self.pipe.download_model()
         self.model.load_state_dict(download_params['state_dict'])
         
-# if __name__ == '__main__':
-#     #No test needed for an abstract method

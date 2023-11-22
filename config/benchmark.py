@@ -6,6 +6,14 @@ from .algorithm import *
 
 logger = logging.getLogger(__name__)
 
+model = ["simpleCNN",
+         "SignAlexNet",
+         "resnet",
+         ""]
+
+optimizer = ["SGD",
+             "Adam"]
+
 class BenchMark:
     def __init__(self, name):
         logger.info("Initializing Benchmark %s", name)
@@ -83,8 +91,21 @@ class Sign(BenchMark):
         self.train_args = {
             'optimizer': 'SGD',
             'device': 'cuda',
-            'lr': 1e-3,
+            'lr': 1e-2,
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }
         self.algorithm = FedIPR()
+        
+        
+def get_benchmark(args: str) -> BenchMark:
+    if(args == "FashionMNIST"):
+        return FashionMNIST()
+    elif (args == "CIFAR10"):
+        return CIFAR10()
+    elif(args == "Sign"):
+        return Sign()
+    else:
+        logger.error(f"Unknown Benchmark {args}")
+        raise Exception(f"Unknown Benchmark {args}") 
+    

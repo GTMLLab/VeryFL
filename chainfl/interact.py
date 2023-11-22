@@ -37,6 +37,12 @@ class chainProxy():
         self.watermark_proxy = watermarkNegotiation[0]
         self.server_accounts = accounts[0]
         self.client_num = 0
+        
+        '''
+        Here Brownie store all address in a vector.
+        We just delegate the index of the vector to the client as the ClientID (str)
+        The interaction with the blockchain is mainly through the ethereum. 
+        '''
         self.client_list = defaultdict(type(accounts[0].address))
         # blockchain_init
     def get_account_num(self):
@@ -54,13 +60,14 @@ class chainProxy():
     #construct the projection between account and client
     def client_regist(self)->str:
         self.client_num += 1
-        if(self.account_num<self.client_num):self.add_account()
+        if(self.account_num<self.client_num):
+            self.add_account()
         self.client_list[str(self.client_num)] = accounts[self.client_num]
         return str(self.client_num) 
     
     def watermark_negotitaion(self,client_id:str,watermark_length=64):
         client_id = int(client_id)
-        self.watermark_proxy.generateWatermark({'from':accounts[client_id]})
+        self.watermark_proxy.generate_watermark({'from':accounts[client_id]})
     
     def upload_model(self,upload_params:dict):
         '''
@@ -82,7 +89,7 @@ class chainProxy():
         download_params = self.upload_params
         download_params['state_dict']  = jsonFormat.json2model(download_params['state_dict'])   
         return download_params
-
+    
     def construct_sign(self, args: dict = {}):
         sign_config = args.get('sign_config')
         model_name  = args.get('model')

@@ -36,23 +36,28 @@ contract clientManager{
     // }
 }
 contract watermarkNegotiation {
-    mapping(address => uint64) public watermarkMapping;
+    //Define the watermark schema.
+    struct watermark{
+        uint   sign;
+        uint[] key;
+    }
+
+    mapping(address => uint) public watermark_mapping;
     uint32 watermark_bit = 64;
     uint32 verification_threshold = 50;
 
-    function generateWatermark() public {
+    function generate_watermark() public {
         //check if the address already has a mapping
-        uint randomWatermark = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
-        uint64 watermark = uint64(randomWatermark);
-        watermarkMapping[msg.sender] = watermark;
+        uint random_watermark = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
+        watermark_mapping[msg.sender] = random_watermark;
     }
 
-    function getwatermarkMapping(address user) public view returns (uint64) {
-        return watermarkMapping[user];
+    function getwatermark_mapping() public view returns (uint) {
+        return watermark_mapping[msg.sender];
     }
 
     function verifyWatermark(address user, uint64 upload_watermark) public view returns (bool){
-        if(watermarkMapping[user] == upload_watermark) return true;
+        if(watermark_mapping[user] == upload_watermark) return true;
         else return false;
     }
 

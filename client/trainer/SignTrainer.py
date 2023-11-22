@@ -51,11 +51,8 @@ class SignTrainer(BaseTrainer):
             epoch_loss = (sum(batch_loss) / len(batch_loss))
             epoch_sign_loss = (sum(batch_sign_loss) / len(batch_sign_loss))
         ret = dict()
-        ret['client_id'] = self.id
-        ret['epoch'] = epoch 
         ret['loss'] = epoch_loss
         ret['sign_loss'] = epoch_sign_loss
-        logger.info(f"client id {self.id} with inner epoch {epoch}, Loss: {epoch_loss}, Sign Loss: {epoch_sign_loss}")
         return ret
     
     

@@ -101,6 +101,47 @@ class Client:
         logger.info(f"client id {self.client_id} with inner epoch {ret['epoch']}, Loss: {total_l}, Acc: {acc}")
         return ret
     
+    def sign_test(self, epoch: int):
+        kwargs = self.watermarks
+        ind = 0 
+        avg_private = 0
+        count_private = 0
+        self.model.eval()
+        with torch.no_grad():
+            if kwargs != None:
+                for m in kwargs:
+                    if kwargs[m]['flag'] == True:
+                        b = kwargs[m]['b']
+                        M = kwargs[m]['M']
+
+                        M = M.to(self.args['device'])
+                        if ind == 0 or ind == 1:
+                            signbit = self.model.features[int(m)].scale.view([1, -1]).mm(M).sign().to(self.args['device'])
+                        if ind == 2 or ind == 3:
+                            w = torch.mean(self.model.features[int(m)].conv.weight, dim=0)
+                            signbit = w.view([1,-1]).mm(M).sign().to(self.args['device'])
+                        #print(signbit)
+
+                        privatebit = b
+                        privatebit = privatebit.sign().to(self.args['device'])
+                
+                        # print(privatebit)
+    
+                        detection = (signbit == privatebit).float().mean().item()
+                        avg_private += detection
+                        count_private += 1
+
+        if kwargs == None:
+            avg_private = -1.0 # Watermark doesn't exist
+        if count_private != 0:
+            avg_private /= count_private
+        ret = dict()
+        ret['client_id'] = self.client_id
+        ret['epoch']     = epoch
+        ret['sign_acc']  = avg_private
+        logger.info(f"client id {self.client_id} with inner epoch {epoch}, Sign Accuarcy: {avg_private}")
+        return ret
+    
     @abstractmethod
     def train(self, epoch: int):
         return
@@ -116,12 +157,7 @@ class BaseClient(Client):
     
 
 class SignClient(Client):
-    def sign_test(self, kwargs, ind):
-        self.model.eval()
-        avg = 0
-        count = 0 
-        with torch.no_grad():
-            return
+    # test the watermark accuarcy.
     
     def train(self, epoch: int, watermarks: dict = None):
         cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(), self.args, self.watermarks)
@@ -131,4 +167,4 @@ class SignClient(Client):
         # sign_loss = ret['sign_loss']
         # Loss: {avg_loss}, Sign Loss: {sign_loss}")
         return 
-        
+    

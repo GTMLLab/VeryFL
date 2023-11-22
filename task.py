@@ -60,10 +60,14 @@ class Task:
         self.test_dataloader = DataLoader(dataset=self.test_dataset, batch_size=batch_size, shuffle=True)
     
     def _construct_sign(self):
+        self.keys_dict = dict()
         self.keys = list()
         sign_num = self.global_args.get('sign_num')
         if(None == sign_num): 
+            sign_num = 0
             logger.info("No client need to add watermark")
+            for ind, (client_id,_) in enumerate(self.client_list.items()):
+                self.keys_dict[client_id] = None
         else:
             logger.info(f"{sign_num} client(s) will inject watermark into their models")
             
@@ -73,7 +77,6 @@ class Task:
                     self.keys.append(key)
                 else : 
                     self.keys.append(None)
-            self.keys_dict = dict()
             for ind, (client_id,_) in enumerate(self.client_list.items()):
                 self.keys_dict[client_id] = self.keys[ind]
             #Project the watermake to the client TODO work with the blockchain
@@ -107,6 +110,7 @@ class Task:
             for client in self.client_pool:
                 client.train(epoch = i)
                 client.test(epoch = i)
+                client.sign_test(epoch = i)
             self.server.receive_upload(self.client_pool)
             global_model = self.server.aggregate()
             for client in self.client_pool:
