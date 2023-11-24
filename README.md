@@ -1,4 +1,4 @@
-# ChainFL Documentaion
+# VaryFL Documentaion
 ## Blockchain for FL
 1. Record model ownership information (based on model watermark) on Blockchain.
 2. Design Smart Contract to record and supervise training information.
