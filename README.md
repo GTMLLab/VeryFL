@@ -1,10 +1,10 @@
-# VaryFL Documentaion
+# VeryFL Documentaion
 ## Blockchain for FL
 1. Record model ownership information (based on model watermark) on Blockchain.
 2. Design Smart Contract to record and supervise training information.
 
 ## Introduction
-VaryFL is a simple federated learning framework embedded with blockchain(Etherenum Network). In this framework, the blockchain acts as a FL training manager to record training message and supervise the entire network. While being able to act the normal federated training experiment, the framework also provide a real blockchain environment to promote the research on blockchain empowered federated learning.
+VeryFL is a simple federated learning framework embedded with blockchain(Etherenum Network). In this framework, the blockchain acts as a FL training manager to record training message and supervise the entire network. While being able to act the normal federated training experiment, the framework also provide a real blockchain environment to promote the research on blockchain empowered federated learning.
 
 ## Dependence
 
