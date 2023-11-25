@@ -39,7 +39,7 @@ VeryFL can simulate the federated learning experiment with both centralized/de-c
 One of the main propose of VeryFL is to provide experiment environment for blockchain-based federated learning. With the embedded Ethereum network, on-chain mechanism can be implemented in Solidity and can be deployed in VeryFL.
 
 ### Model copyright protection and transaction .
-By inject watermark into model through model watermarking technology, VeryFL implement a demo framework which can protect model copyright and execute model transaction by managing watermark on the blockchain.(Detail of this function can refer to our article below [1] )
+By inject watermark into model through model watermarking technology, VeryFL implement a demo framework which can protect model copyright and execute model transaction by managing watermark on the blockchain.(Detail of this function can refer to our article below [2])
 
 ## Code Structure and Usage
 
