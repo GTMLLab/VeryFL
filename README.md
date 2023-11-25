@@ -4,9 +4,6 @@
 [![python](https://img.shields.io/badge/-Python_3.7_%7C_3.8_%7C_3.9-blue?logo=python&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![Solidity](https://img.shields.io/badge/Solidity_0.8.21-%23363636.svg?logo=solidity&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch_1.13-%23EE4C2C.svg?logo=PyTorch&logoColor=white)
-## Blockchain for FL
-1. Record model ownership information (based on model watermark) on Blockchain.
-2. Design Smart Contract to record and supervise training information.
 
 ## Introduction
 VeryFL is a simple federated learning framework embedded with blockchain(Etherenum Network). In this framework, the blockchain acts as a FL training manager to record training message and supervise the entire network. While being able to act the normal federated training experiment, the framework also provide a real blockchain environment to promote the research on blockchain empowered federated learning.
