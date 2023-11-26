@@ -89,9 +89,9 @@ In ./config/benchmark.py, each Benchmark contains three parts
 4. Interact with blockchain when training through chainProxy.
 
 ## Relative Article
-[1] [VeryFL Design] [VeryFL: A Verify Federated Learning Framework Embedded with Blockchain](106.52.19.28/resource/VeryFL.pdf)(Arxiv)
+[1] [VeryFL Design] [VeryFL: A Verify Federated Learning Framework Embedded with Blockchain](http://106.52.19.28/resource/VeryFL.pdf)(Arxiv)
 
-[2] [Model Copyright] [Tokenized Model: A Blockchain-Empowered Decentralized Model Ownership Verification Platform](106.52.19.28/resource/Tokenized.pdf)(Arxiv)
+[2] [Model Copyright] [Tokenized Model: A Blockchain-Empowered Decentralized Model Ownership Verification Platform](http://106.52.19.28/resource/Tokenized.pdf)(Arxiv)
 
 [3] [Overall Background] [Towards Reliable Utilization of AIGC: Blockchain-Empowered Ownership Verification Mechanism](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10254223)(OJCS 2023)
 
