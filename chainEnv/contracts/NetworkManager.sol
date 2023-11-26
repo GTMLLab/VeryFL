@@ -20,11 +20,11 @@ contract NetworkManager{
     }
 
     address public owner;
-    mapping(address => TrainResult) regist_result;
+    mapping(address => TrainResult) public regist_result;
     address[] public regist_client;
     //mapping(address => TrainResult) public regist_client;
 
-    FLMeta fl_info;
+    FLMeta public fl_info;
     TrainResult[] fl_result;
     
     modifier only_owner{
@@ -32,7 +32,7 @@ contract NetworkManager{
         _;
     }
     modifier only_participant{
-        require(is_duplicate_client(msg.sender), "Onlu participant can call this func");
+        require(is_duplicate_client(msg.sender), "Only participant can call this func");
         _;
     }
     function fl_init(uint client_num, uint round, string calldata fl_algorithm) public only_owner{
@@ -53,12 +53,9 @@ contract NetworkManager{
     }
 
     function upload_result(uint a, uint b, uint epoch) public only_participant{
-        TrainResult memory tmp;
-        tmp.a = a;
-        tmp.b = b;
-        tmp.epoch = epoch;
-        regist_result[msg.sender] = tmp;
+        TrainResult storage c = regist_result[msg.sender];
+        c.a = a;
+        c.b = b;
+        c.epoch = epoch;
     }
-
-
 }

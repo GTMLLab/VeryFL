@@ -94,19 +94,25 @@ class ResNet(SimpleNet):
 def ResNet18(name=None, created_time=None, class_num=10):
     return ResNet(BasicBlock, [2,2,2,2],name='{0}_ResNet_18'.format(name), created_time=created_time, class_num=class_num)
 
-def ResNet34(name=None, created_time=None):
-    return ResNet(BasicBlock, [3,4,6,3],name='{0}_ResNet_34'.format(name), created_time=created_time)
+def ResNet34(name=None, created_time=None, class_num=10):
+    return ResNet(BasicBlock, [3,4,6,3],name='{0}_ResNet_34'.format(name), created_time=created_time, class_num=class_num)
 
-def ResNet50(name=None, created_time=None):
-    return ResNet(Bottleneck, [3,4,6,3],name='{0}_ResNet_50'.format(name), created_time=created_time)
+def ResNet50(name=None, created_time=None, class_num=10):
+    return ResNet(Bottleneck, [3,4,6,3],name='{0}_ResNet_50'.format(name), created_time=created_time, class_num=class_num)
 
-def ResNet101(name=None, created_time=None):
-    return ResNet(Bottleneck, [3,4,23,3],name='{0}_ResNet'.format(name), created_time=created_time)
+def ResNet101(name=None, created_time=None, class_num=10):
+    return ResNet(Bottleneck, [3,4,23,3],name='{0}_ResNet'.format(name), created_time=created_time, class_num=class_num)
 
-def ResNet152(name=None, created_time=None):
-    return ResNet(Bottleneck, [3,8,36,3],name='{0}_ResNet'.format(name), created_time=created_time)
+def ResNet152(name=None, created_time=None, class_num=10):
+    return ResNet(Bottleneck, [3,8,36,3],name='{0}_ResNet'.format(name), created_time=created_time, class_num=class_num)
 
-
+__all__ = [
+    "ResNet18",
+    "ResNet34",
+    "ResNet50",
+    "ResNet101",
+    "ResNet152",
+]
 def test():
     net = ResNet18()
     y = net(Variable(torch.randn(1,3,32,32)))

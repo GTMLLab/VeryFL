@@ -29,7 +29,7 @@ class SignTrainer(BaseTrainer):
         batch_sign_loss = []
         for _, (x, labels) in enumerate(self.dataloader):
             x, labels = x.to(device), labels.to(device)
-            model.zero_grad()
+            self.optimizer.zero_grad()
             log_probs = model(x)
             loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
             sign_loss = torch.tensor(0.).to(device)

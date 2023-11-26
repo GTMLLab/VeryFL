@@ -8,8 +8,11 @@ logger = logging.getLogger(__name__)
 
 model = ["simpleCNN",
          "SignAlexNet",
-         "resnet",
-         ""]
+         "resnet18",
+         "resnet34",
+         "resnet50",
+         "resnet101",
+         "resnet152",]
 
 optimizer = ["SGD",
              "Adam"]
@@ -51,7 +54,7 @@ class CIFAR10(BenchMark):
         super(CIFAR10,self).__init__('CIFAR10')
         self.global_args = {
             'client_num': 10,
-            'model': 'resnet',
+            'model': 'resnet18',
             'dataset': 'CIFAR10',
             'batch_size': 32,
             'class_num': 10,

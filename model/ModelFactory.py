@@ -1,4 +1,4 @@
-from .resnet import ResNet18
+from .resnet import *
 from .alexnet import createAlexNet
 from .simple_cnn import get_simple_cnn
 from .SignAlexNet import get_sign_alexnet
@@ -15,8 +15,16 @@ class ModelFactory:
         return
     def get_model(self, model, class_num, args={}):
         #now model could be: resnet, alexnet, ...
-        if model == 'resnet':
+        if model == 'resnet18':
             return ResNet18(class_num)
+        elif model == 'resnet34':
+            return ResNet34(class_num)
+        elif model == 'resnet50':
+            return ResNet50(class_num)
+        elif model == 'resnet101':
+            return ResNet101(class_num)
+        elif model == 'resnet152':
+            return ResNet152(class_num)
         elif model == 'alexnet':
             return createAlexNet(class_num)
         elif model == 'simpleCNN':
