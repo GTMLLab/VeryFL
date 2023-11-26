@@ -1,4 +1,4 @@
-# VeryFL Documentaion
+# VeryFL: A Federated Learning Framework Embedded with Blockchain
 <center>
 
 ![VeryFL](./img_src/VeryFL1126.png)
