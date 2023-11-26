@@ -1,5 +1,5 @@
 # VeryFL: A Federated Learning Framework Embedded with Blockchain
-<center>
+<div align="center">
 
 ![VeryFL](./img_src/VeryFL1126.png)
 ![OS](https://img.shields.io/badge/OS-Linux-orange)
@@ -7,7 +7,7 @@
 ![Solidity](https://img.shields.io/badge/Solidity_0.8.21-%23363636.svg?logo=solidity&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch_1.13-%23EE4C2C.svg?logo=PyTorch&logoColor=white)
 
-</center>
+</div>
 
 ## Introduction
 VeryFL is a simple federated learning framework embedded with blockchain (Etherenum). Federated Learning side uses PyTorch while blockchain-side use Solidity deployed on Ethereum to implement on-chain mechanism.
