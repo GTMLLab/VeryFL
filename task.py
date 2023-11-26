@@ -51,7 +51,7 @@ class Task:
     
     def _construct_dataloader(self):
         logger.info("Constructing dataloader with batch size %d, client_num: %d, non-iid: %s", self.global_args.get('batch_size')
-                    , chain_proxy.get_account_num(), "True" if self.global_args['non-iid'] else "False")
+                    , chain_proxy.get_client_num(), "True" if self.global_args['non-iid'] else "False")
         batch_size = self.global_args.get('batch_size')
         batch_size = 8 if (batch_size is None) else batch_size
         self.train_dataloader_list = DatasetSpliter().random_split(dataset     = self.train_dataset,

@@ -113,7 +113,10 @@ __all__ = [
     "ResNet101",
     "ResNet152",
 ]
-def test():
+
+
+if __name__ == "__main__": 
     net = ResNet18()
-    y = net(Variable(torch.randn(1,3,32,32)))
+    x = torch.randn(32,3,32,32)
+    y = net(x)
     print(y.size())

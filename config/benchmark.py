@@ -12,7 +12,11 @@ model = ["simpleCNN",
          "resnet34",
          "resnet50",
          "resnet101",
-         "resnet152",]
+         "resnet152",
+         "VGG_A",
+         "VGG_B",
+         "VGG_D",
+         "VGG_E",]
 
 optimizer = ["SGD",
              "Adam"]
@@ -66,7 +70,7 @@ class CIFAR10(BenchMark):
         self.train_args = {
             'optimizer': 'SGD',
             'device': 'cuda',
-            'lr': 1e-3,
+            'lr': 1e-2,
             'weight_decay': 1e-5,  
             'num_steps': 1,
         }

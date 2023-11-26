@@ -1,4 +1,5 @@
 from .resnet import *
+from .VGG import *
 from .alexnet import createAlexNet
 from .simple_cnn import get_simple_cnn
 from .SignAlexNet import get_sign_alexnet
@@ -29,6 +30,14 @@ class ModelFactory:
             return createAlexNet(class_num)
         elif model == 'simpleCNN':
             return get_simple_cnn(class_num)
+        elif model == 'VGG_A':
+            return VGG_A(class_num=class_num)
+        elif model == 'VGG_B':
+            return VGG_B(class_num=class_num)
+        elif model == 'VGG_D':
+            return VGG_D(class_num=class_num)
+        elif model == 'VGG_E':
+            return VGG_E(class_num=class_num)
         else:
             logger.warn("ModelFactory received an unknown model %s", model)
             return None

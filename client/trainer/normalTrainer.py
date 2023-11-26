@@ -24,14 +24,14 @@ class normalTrainer(BaseTrainer):
         batch_loss = []
         for _, (x, labels) in enumerate(self.dataloader):
             x, labels = x.to(device), labels.to(device)
-            self.optimizer.zero_grad()
             log_probs = model(x)
             loss = self.criterion(log_probs, labels)  # pylint: disable=E1102
-            loss.backward()
+            
 
             # Uncommet this following line to avoid nan loss
             # torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-
+            self.optimizer.zero_grad()
+            loss.backward()
             self.optimizer.step()
             batch_loss.append(loss.item())
         if len(batch_loss) == 0:

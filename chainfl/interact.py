@@ -47,6 +47,8 @@ class chainProxy():
         # blockchain_init
     def get_account_num(self):
         return self.account_num
+    def get_client_num(self):
+        return self.client_num
     
     def get_client_list(self):
         return self.client_list    

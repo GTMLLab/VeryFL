@@ -12,7 +12,7 @@ def get_file_name():
     suffix = ".log"
     order = 0
     while(True):
-        filename = time + str(order) + suffix
+        filename = os.path.join(log_folder,time + str(order) + suffix)
         if(os.path.exists(filename)):
             order += 1
             continue
@@ -21,7 +21,7 @@ def get_file_name():
     
 
 def set_log_config():
-    logging.basicConfig(filename = os.path.join(log_folder,get_file_name()), 
+    logging.basicConfig(filename = get_file_name(), 
                         encoding = encoding, 
                         level = level,
                         format = format)
