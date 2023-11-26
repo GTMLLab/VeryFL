@@ -1,12 +1,21 @@
 # VeryFL Documentaion
-![VeryFL](./img_src/VeryFL.png)
+<center>
+
+![VeryFL](./img_src/VeryFL1126.png)
 ![OS](https://img.shields.io/badge/OS-Linux-orange)
 [![python](https://img.shields.io/badge/-Python_3.7_%7C_3.8_%7C_3.9-blue?logo=python&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![Solidity](https://img.shields.io/badge/Solidity_0.8.21-%23363636.svg?logo=solidity&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch_1.13-%23EE4C2C.svg?logo=PyTorch&logoColor=white)
 
+</center>
+
 ## Introduction
-VeryFL is a simple federated learning framework embedded with blockchain(Etherenum Network). In this framework, the blockchain acts as a FL training manager to record training message and supervise the entire network. While being able to act the normal federated training experiment, the framework also provide a real blockchain environment to promote the research on blockchain empowered federated learning.
+VeryFL is a simple federated learning framework embedded with blockchain (Etherenum). Federated Learning side uses PyTorch while blockchain-side use Solidity deployed on Ethereum to implement on-chain mechanism.
+The main propose of VeryFL is to provide the blockchain-based FL algorithm with a real execution environment. However you can use VeryFL for:
+ 
+ - Understanding basic workflow of the federated learning.
+ - Verifying centralized federated learning algorithm.  
+ - Verifying blockchain-based federated learning algorithm running on real Ethereum environment.
 
 ## Dependence
 
@@ -65,7 +74,7 @@ if __name__=="__main__":
 
 ### Customize Task Parameter
 In ./config/benchmark.py, each Benchmark contains three parts
-1. global_args: global fl parameters like client number, dataset, model.
+1. global_args: global FL parameters like client number, dataset, model.
 2. train_args: training parameters like learning rate, weight decay.
 3. Algorithm: federated learning algorithm (Aggregator, Client, Trainer)
 
@@ -80,10 +89,10 @@ In ./config/benchmark.py, each Benchmark contains three parts
 4. Interact with blockchain when training through chainProxy.
 
 ## Relative Article
-[1] (VeryFL Design) VeryFL: A Verify Federated Learning Framework Embedded with Blockchain
+[1] [VeryFL Design] VeryFL: A Verify Federated Learning Framework Embedded with Blockchain
 
-[2] (Model Copyright) Tokenized Model: A Blockchain-Empowered Decentralized Model Ownership Verification Platform 
+[2] [Model Copyright] Tokenized Model: A Blockchain-Empowered Decentralized Model Ownership Verification Platform 
 
-[3] (Overall Background) [Towards Reliable Utilization of AIGC: Blockchain-Empowered Ownership Verification Mechanism](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10254223)(OJCS 2023)
+[3] [Overall Background] [Towards Reliable Utilization of AIGC: Blockchain-Empowered Ownership Verification Mechanism](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10254223)(OJCS 2023)
 
-[4] (Using VeryFL) [A decentralized federated learning framework via committee mechanism with convergence guarantee](https://arxiv.org/pdf/2108.00365.pdf)(TPDS 2022)
+[4] [Using VeryFL] [A decentralized federated learning framework via committee mechanism with convergence guarantee](https://arxiv.org/pdf/2108.00365.pdf)(TPDS 2022)
