@@ -88,7 +88,7 @@ class DatasetSpliter:
             for shard in tasks_shards[ind]:
                 per_class_list[client_id] += shard
         return per_class_list
-        
+                
     def dirichlet_split(self, dataset: Dataset, client_list: dict, batch_size: int = 32, alpha: int = 1) -> dict[DataLoader]:
         #get each client samples
         split_list = self._sample_dirichlet(dataset = dataset, 
@@ -129,6 +129,37 @@ class DatasetSpliter:
         #Here we use a large alpha to simulate the average sampling.
         return self.dirichlet_split(dataset, client_list, batch_size, 1000000)
     
-    
+    def domain_split(self, dataset_list: list, client_list: dict, batch_size: int = 32) -> dict[DataLoader]:
+        clients_num = len(client_list)
+        domains_num = len(dataset_list)
+        dataloaders = defaultdict(DataLoader)
 
-    
+        client_idx = 0
+        for domain_idx, domain_dataset in enumerate(dataset_list):
+            domain_size = len(domain_dataset)
+            indices = list(range(domain_size))
+            random.shuffle(indices)
+
+            clients_for_domain = clients_num // domains_num
+            if domain_idx < clients_num % domains_num:
+                clients_for_domain += 1
+            
+            domain_indices_per_client = domain_size // clients_for_domain
+            extra_indices = domain_size % clients_for_domain
+            start_idx, end_idx = 0, 0
+            for i in range(clients_for_domain):
+                start_idx = end_idx
+                end_idx = start_idx + domain_indices_per_client
+                if i < extra_indices:
+                    end_idx += 1
+                client_indices = indices[start_idx:end_idx]
+                client_id = list(client_list.keys())[client_idx]
+                client_idx += 1
+                
+                this_dataloader = DataLoader(dataset = domain_dataset,
+                                         batch_size  = batch_size,
+                                         sampler     = SubsetRandomSampler(client_indices),
+                                         num_workers = 4)
+                dataloaders[client_id] = this_dataloader
+
+        return dataloaders

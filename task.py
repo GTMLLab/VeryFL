@@ -1,4 +1,5 @@
 import logging
+logging.getLogger('PIL').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 from torch.utils.data import DataLoader
@@ -54,10 +55,18 @@ class Task:
                     , chain_proxy.get_client_num(), "True" if self.global_args['non-iid'] else "False")
         batch_size = self.global_args.get('batch_size')
         batch_size = 8 if (batch_size is None) else batch_size
-        self.train_dataloader_list = DatasetSpliter().random_split(dataset     = self.train_dataset,
-                                                                   client_list = chain_proxy.get_client_list(),
-                                                                   batch_size  = batch_size)
-        self.test_dataloader = DataLoader(dataset=self.test_dataset, batch_size=batch_size, shuffle=True)
+        if self.global_args.get('dataset') in ['PACS']:     # multi domain datasets
+            self.train_dataloader_list = DatasetSpliter().domain_split(dataset_list  = self.train_dataset,
+                                                                    client_list      = chain_proxy.get_client_list(),
+                                                                    batch_size       = batch_size)
+            self.test_dataloader = []
+            for domain_dataset in self.test_dataset:
+                self.test_dataloader.append(DataLoader(dataset=domain_dataset, batch_size=batch_size, shuffle=True))
+        else:
+            self.train_dataloader_list = DatasetSpliter().random_split(dataset  = self.train_dataset,
+                                                                    client_list = chain_proxy.get_client_list(),
+                                                                    batch_size  = batch_size)
+            self.test_dataloader = [DataLoader(dataset=self.test_dataset, batch_size=batch_size, shuffle=True)]
     
     def _construct_sign(self):
         self.keys_dict = dict()

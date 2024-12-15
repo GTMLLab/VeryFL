@@ -75,6 +75,28 @@ class CIFAR10(BenchMark):
             'num_steps': 1,
         }
         self.algorithm = FedAvg()
+
+class PACS(BenchMark):
+    def __init__(self):
+        super(PACS,self).__init__('PACS')
+        self.global_args = {
+            'client_num': 10,
+            'model': 'resnet18',
+            'dataset': 'PACS',
+            'batch_size': 32,
+            'class_num': 7,
+            'data_folder': './data',
+            'communication_round': 200,
+            'non-iid': False,
+        }
+        self.train_args = {
+            'optimizer': 'SGD',
+            'device': 'cuda',
+            'lr': 3e-3,
+            'weight_decay': 1e-5,  
+            'num_steps': 1,
+        }
+        self.algorithm = FedAvg()
         
 class Sign(BenchMark):
     def __init__(self):
@@ -110,6 +132,8 @@ def get_benchmark(args: str) -> BenchMark:
         return FashionMNIST()
     elif (args == "CIFAR10"):
         return CIFAR10()
+    elif (args == "PACS"):
+        return PACS()
     elif(args == "Sign"):
         return Sign()
     else:

@@ -79,26 +79,27 @@ class Client:
         num_data = 0
         predict_label = torch.tensor([]).to(self.args['device'])
         true_label = torch.tensor([]).to(self.args['device'])
-        for batch_id, batch in enumerate(self.test_dataloader):
-            data, targets = batch
-            data, targets = data.to(self.args['device']), targets.to(self.args['device'])
-            true_label = torch.cat((true_label, targets), 0)
-            output = self.model(data)
-            total_loss += torch.nn.functional.cross_entropy(output, targets,
-                                                            reduction='sum').item()  # sum up batch loss
-            # get the index of the max log-probability
-            pred = output.data.max(1)[1]
-            predict_label = torch.cat((predict_label, pred), 0)
-            correct += pred.eq(targets.data.view_as(pred)).cpu().sum().item()
-            num_data += output.size(0)
-        acc = 100.0 * (float(correct) / float(num_data))
-        total_l = total_loss / float(num_data)
-        ret = dict()
-        ret['client_id'] = self.client_id
-        ret['epoch'] = epoch
-        ret['loss'] = total_l
-        ret['acc'] = acc
-        logger.info(f"client id {self.client_id} with inner epoch {ret['epoch']}, Loss: {total_l}, Acc: {acc}")
+        for i, dataloader in enumerate(self.test_dataloader):
+            for batch_id, batch in enumerate(dataloader):
+                data, targets = batch
+                data, targets = data.to(self.args['device']), targets.to(self.args['device'])
+                true_label = torch.cat((true_label, targets), 0)
+                output = self.model(data)
+                total_loss += torch.nn.functional.cross_entropy(output, targets,
+                                                                reduction='sum').item()  # sum up batch loss
+                # get the index of the max log-probability
+                pred = output.data.max(1)[1]
+                predict_label = torch.cat((predict_label, pred), 0)
+                correct += pred.eq(targets.data.view_as(pred)).cpu().sum().item()
+                num_data += output.size(0)
+            acc = 100.0 * (float(correct) / float(num_data))
+            total_l = total_loss / float(num_data)
+            ret = dict()
+            ret['client_id'] = self.client_id
+            ret['epoch'] = epoch
+            ret[f'loss_{i}'] = total_l
+            ret[f'acc_{i}'] = acc
+            logger.info(f"client id {self.client_id} with inner epoch {ret['epoch']}, Loss: {total_l}, Acc: {acc}")
         return ret
     
     def sign_test(self, epoch: int):
