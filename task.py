@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from config.algorithm import Algorithm
 from server.aggregation_alg.fedavg import fedavgAggregator
 from client.clients import Client, BaseClient, SignClient
+from client.dataset_clients import DatasetClient
 from client.trainer.fedproxTrainer import fedproxTrainer
 from client.trainer.SignTrainer import SignTrainer
 from model.ModelFactory import ModelFactory
@@ -37,7 +38,7 @@ class Task:
         self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'))
         
         #FL alg
-        logger.info("Algorithm: {algorithm}")
+        logger.info(f"Algorithm: {algorithm}")
         self.server = algorithm.get_server()
         self.server = self.server()
         self.trainer = algorithm.get_trainer()
@@ -46,6 +47,9 @@ class Task:
         #Get Client and Trainer
         self.client_list = None
         self.client_pool : list[Client] = []
+
+        #Watermark DatasetClient
+        self.dataset_client = None
         
     def __repr__(self) -> str:
         pass
@@ -109,7 +113,26 @@ class Task:
                                     self.trainer, self.train_args, self.test_dataloader, self.keys_dict[client_id])
             self.client_pool.append(new_client)
     
+    def _construct_watermarked_dataset(self):
+        if self.global_args.get('watermark_dataset'):
+            self.dataset_client = DatasetClient(args=self.train_args)
+            self.dataset_client.inject(self.train_dataset)
+            self.train_dataset = self.dataset_client.get_dataset()
+        else:
+            logger.info("Not use watermarked dataset.")
+    
+    def _verify_dataset(self, model):
+        if self.global_args.get('watermark_dataset'):
+            if self.dataset_client.verify(model):
+                logger.info("Watermark detected. Model trained on watermarked dataset.")
+            else:
+                logger.info("No watermark detected.")
+        else:
+            logger.info("No need to verify dataset.")
+        
+    
     def run(self):
+        self._construct_watermarked_dataset()
         self._regist_client()
         self._construct_dataloader()
         self._construct_sign()
@@ -124,3 +147,6 @@ class Task:
             global_model = self.server.aggregate()
             for client in self.client_pool:
                 client.load_state_dict(global_model)
+        
+        if len(self.client_pool) > 0:
+            self._verify_dataset(self.client_pool[0].model)

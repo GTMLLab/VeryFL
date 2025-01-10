@@ -33,7 +33,7 @@ def upload():
 class chainProxy():
     def __init__(self):
         self.upload_params = None
-        self.account_num = len(accounts) - 1 #accounts used for client
+        self.account_num = 0 #accounts used for client
         self.watermark_proxy = watermarkNegotiation[0]
         self.server_accounts = accounts[0]
         self.client_num = 0
@@ -47,16 +47,15 @@ class chainProxy():
         # blockchain_init
     def get_account_num(self):
         return self.account_num
+    
     def get_client_num(self):
         return self.client_num
     
     def get_client_list(self):
-        return self.client_list    
-    
+        return self.client_list
     
     def add_account(self)->str:
         account = accounts.add()
-        self.account_num += 1
         return account.address
     
     #construct the projection between account and client
@@ -64,12 +63,16 @@ class chainProxy():
         self.client_num += 1
         if(self.account_num<self.client_num):
             self.add_account()
-        self.client_list[str(self.client_num)] = accounts[self.client_num]
-        return str(self.client_num) 
+            self.account_num += 1
+        self.client_list[str(self.client_num)] = accounts[-1]
+        return str(self.client_num)
     
-    def watermark_negotitaion(self,client_id:str,watermark_length=64):
-        client_id = int(client_id)
-        self.watermark_proxy.generate_watermark({'from':accounts[client_id]})
+    def watermark_negotitaion(self,account,watermark_length=64):
+        watermark = self.watermark_proxy.generate_watermark({'from':account}).return_value
+        # Convert the watermark to a binary string and remove the "0b" prefix
+        watermark_bin = bin(watermark)[2:].zfill(watermark_length)
+        watermark_tensor = torch.tensor([float(bit) for bit in watermark_bin], dtype=torch.float32)
+        return watermark_tensor
     
     def upload_model(self,upload_params:dict):
         '''

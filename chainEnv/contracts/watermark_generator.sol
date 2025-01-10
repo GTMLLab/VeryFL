@@ -46,10 +46,11 @@ contract watermarkNegotiation {
     uint32 watermark_bit = 64;
     uint32 verification_threshold = 50;
 
-    function generate_watermark() public {
+    function generate_watermark() public returns (uint) {
         //check if the address already has a mapping
         uint random_watermark = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
         watermark_mapping[msg.sender] = random_watermark;
+        return random_watermark;
     }
 
     function getwatermark_mapping() public view returns (uint) {

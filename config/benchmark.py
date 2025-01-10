@@ -37,10 +37,11 @@ class FashionMNIST(BenchMark):
             'client_num': 10,
             'model': 'simpleCNN',
             'dataset': 'FashionMNIST',
+            'watermark_dataset': False,
             'batch_size': 32,
             'class_num': 10,
             'data_folder': './data',
-            'communication_round': 200,
+            'communication_round': 100,
             'non-iid': False,
             'alpha': 1,
         }
@@ -60,6 +61,7 @@ class CIFAR10(BenchMark):
             'client_num': 10,
             'model': 'resnet18',
             'dataset': 'CIFAR10',
+            'watermark_dataset': False,
             'batch_size': 32,
             'class_num': 10,
             'data_folder': './data',
@@ -86,7 +88,7 @@ class PACS(BenchMark):
             'batch_size': 32,
             'class_num': 7,
             'data_folder': './data',
-            'communication_round': 200,
+            'communication_round': 1,
             'non-iid': False,
         }
         self.train_args = {
