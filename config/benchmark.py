@@ -50,6 +50,7 @@ class FashionMNIST(BenchMark):
             'device': 'cuda',
             'lr': 1e-2,
             'weight_decay': 1e-5,  
+            'reg_weight': 0.1,
             'num_steps': 1,
         }
         self.algorithm = FedAvg()
@@ -74,6 +75,7 @@ class CIFAR10(BenchMark):
             'device': 'cuda',
             'lr': 1e-2,
             'weight_decay': 1e-5,  
+            'reg_weight': 0.1,
             'num_steps': 1,
         }
         self.algorithm = FedAvg()
@@ -88,7 +90,7 @@ class PACS(BenchMark):
             'batch_size': 32,
             'class_num': 7,
             'data_folder': './data',
-            'communication_round': 1,
+            'communication_round': 100,
             'non-iid': False,
         }
         self.train_args = {
@@ -96,6 +98,7 @@ class PACS(BenchMark):
             'device': 'cuda',
             'lr': 3e-3,
             'weight_decay': 1e-5,  
+            'reg_weight': 0.1,
             'num_steps': 1,
         }
         self.algorithm = FedAvg()

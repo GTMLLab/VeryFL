@@ -15,15 +15,14 @@ class ServerAggregator(ABC):
         self.model = model
         self.id = 0
         self.args = args
-        self.model_pool = []
+        self.client_pool = None
     def set_id(self, aggregator_id):
         self.id = aggregator_id
-    def receive_upload(self,client_pool:List[Client]):
-        for client in client_pool:
-            self.model_pool.append(client.get_model_state_dict())
+    def receive_upload(self, client_pool: List[Client]):
+        self.client_pool = client_pool
         
     @abstractmethod
-    def _aggregate_alg(self,raw_client_model_or_grad_list:List[OrderedDict]=None):
+    def _aggregate_alg(self, raw_client_list: List[Client]=None):
         '''
         This method complement the aggregation method, 
         like fedavg and some aggregate operation done in server side,
@@ -46,9 +45,9 @@ class ServerAggregator(ABC):
         '''
         pass
 
-    def aggregate(self, raw_client_model_or_grad_list: [OrderedDict]=None) -> OrderedDict:
-        if(raw_client_model_or_grad_list is None): raw_client_model_or_grad_list = self.model_pool
-        return self._aggregate_alg(raw_client_model_or_grad_list)
+    def aggregate(self, raw_client_list: List[Client]=None) -> OrderedDict:
+        if(raw_client_list is None): raw_client_list = self.client_pool
+        return self._aggregate_alg(raw_client_list)
         #return FedMLAggOperator.agg(self.args, raw_client_model_or_grad_list)
 
     def _on_after_aggregation(self, aggregated_model_or_grad: OrderedDict) -> OrderedDict:

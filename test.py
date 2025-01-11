@@ -12,7 +12,7 @@ set_log_config()
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--benchmark', type=str, default="FashionMNIST", help="Running Benchmark(See ./config/benchmark.py)")
+    parser.add_argument('--benchmark', type=str, default="PACS", help="Running Benchmark(See ./config/benchmark.py)")
     args = parser.parse_args()
     logger.info(f"Get benchmark {args.benchmark}")
     benchmark = config.benchmark.get_benchmark(args.benchmark)

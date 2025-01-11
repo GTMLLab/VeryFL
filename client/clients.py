@@ -33,10 +33,10 @@ class Client:
         self.model = deepcopy(model)
         self.client_id = client_id
         self.dataloader = dataloader
-        self.trainer = trainer
         self.args = args
         self.test_dataloader = test_dataloader
         self.watermarks = watermarks
+        self.trainer = trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
         
     def set_model(self, model: nn.Module) -> None:
         self.model = deepcopy(model)
@@ -150,8 +150,7 @@ class Client:
 class BaseClient(Client):
     
     def train(self, epoch: int):    
-        cal = self.trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
-        ret_list = cal.train(self.args.get('num_steps'))
+        ret_list = self.trainer.train(self.args.get('num_steps'))
         
         self.show_train_result(epoch, ret_list)
         return

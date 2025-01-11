@@ -1,6 +1,7 @@
 import logging
 from server.base.baseAggregator import ServerAggregator
 from server.aggregation_alg.fedavg import fedavgAggregator
+from server.aggregation_alg.fedproto import fedprotoAggregator
 from client.base.baseTrainer import BaseTrainer
 from client.trainer.normalTrainer import normalTrainer
 from client.clients import Client, BaseClient
@@ -41,6 +42,11 @@ class FedProx(Algorithm):
     def __init__(self):
         super(FedProx, self).__init__(trainer=fedproxTrainer)
 
+from client.trainer.fedprotoTrainer import fedprotoTrainer
+class FedProto(Algorithm):
+    def __init__(self):
+        super(FedProto, self).__init__(trainer=fedprotoTrainer, server=fedprotoAggregator)
+
 from client.trainer.SignTrainer import SignTrainer
 from client.clients import SignClient  
 class FedIPR(Algorithm):
@@ -52,5 +58,6 @@ class FedIPR(Algorithm):
 __all__ = [
     "FedAvg",
     "FedProx",
+    "FedProto",
     "FedIPR",   
 ]
