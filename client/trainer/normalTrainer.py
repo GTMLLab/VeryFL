@@ -8,9 +8,10 @@ from client.base.baseTrainer import BaseTrainer
 logger = logging.getLogger(__name__)
 
 class normalTrainer(BaseTrainer):
-    def __init__(self, model,dataloader,criterion, args={}):
-        super().__init__(model, dataloader, criterion, args)
+    def __init__(self, model, dataloader, criterion, args={}, watermarks={}):
+        super().__init__(model, dataloader, criterion, args, watermarks)
         self.criterion = torch.nn.CrossEntropyLoss()
+        
     def _train_epoch(self, epoch):
 
         model = self.model

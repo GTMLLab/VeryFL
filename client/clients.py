@@ -3,6 +3,7 @@ from abc import abstractmethod
 import logging
 
 from client.base.baseTrainer import BaseTrainer
+from transformers import PreTrainedTokenizer
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch
@@ -27,7 +28,7 @@ class Client:
         model: nn.Module,
         trainer: BaseTrainer,
         args: dict = {},
-        test_dataloader: DataLoader = None,
+        test_dataloader: list = None,
         watermarks: dict = {},
     ) -> None:
         self.model = deepcopy(model)
@@ -36,7 +37,7 @@ class Client:
         self.args = args
         self.test_dataloader = test_dataloader
         self.watermarks = watermarks
-        self.trainer = trainer(self.model,self.dataloader,torch.nn.CrossEntropyLoss(),self.args)
+        self.trainer = trainer(self.model, self.dataloader, torch.nn.CrossEntropyLoss(), self.args, self.watermarks)
         
     def set_model(self, model: nn.Module) -> None:
         self.model = deepcopy(model)

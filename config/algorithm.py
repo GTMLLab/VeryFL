@@ -34,8 +34,8 @@ class Algorithm:
     
 
 class FedAvg(Algorithm):
-    def __init__(self):
-        super(FedAvg, self).__init__()
+    def __init__(self, client=None):
+        super(FedAvg, self).__init__(client=client)
 
 from client.trainer.fedproxTrainer import fedproxTrainer
 class FedProx(Algorithm):

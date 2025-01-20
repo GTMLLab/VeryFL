@@ -19,9 +19,22 @@ class DatasetSpliter:
     '''
     def __init__(self) -> None:
         return
+    
     def _sample_random(self, dataset: Dataset, client_list: dict):
+        num_samples = len(dataset)
+        indices = list(range(num_samples))
+        random.shuffle(indices)
         
-        return
+        num_clients = len(client_list)
+        samples_per_client = num_samples // num_clients
+        
+        per_client_list = defaultdict(list)
+        for i, client_id in enumerate(client_list.keys()):
+            start_idx = i * samples_per_client
+            end_idx = (i + 1) * samples_per_client if i != num_clients - 1 else num_samples
+            per_client_list[client_id] = indices[start_idx:end_idx]
+
+        return per_client_list
     
     def _divide_into_shards(self, l: list, g: int):
         """
@@ -126,8 +139,21 @@ class DatasetSpliter:
         return dataloaders
     
     def random_split(self, dataset: Dataset, client_list: dict, batch_size: int = 32) -> dict[DataLoader]:
-        #Here we use a large alpha to simulate the average sampling.
-        return self.dirichlet_split(dataset, client_list, batch_size, 1000000)
+        #get each client samples
+        split_list = self._sample_random(dataset = dataset, 
+                                            client_list = client_list)
+        dataloaders = defaultdict(DataLoader)
+        
+        #construct dataloader
+        for ind, (client_id, _) in enumerate(client_list.items()):
+            indices = split_list[client_id]
+            this_dataloader = DataLoader(dataset    = dataset,
+                                         batch_size = batch_size,
+                                         sampler    = SubsetRandomSampler(indices),
+                                         num_workers= 4)
+            dataloaders[client_id] = this_dataloader 
+        
+        return dataloaders
     
     def domain_split(self, dataset_list: list, client_list: dict, batch_size: int = 32) -> dict[DataLoader]:
         clients_num = len(client_list)

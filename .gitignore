@@ -1,5 +1,6 @@
 __pycache__
 data/
+output/
 chainEnv/interfaces/
 chainEnv/tests/
 chainEnv/contracts/FedAvg

@@ -3,6 +3,7 @@ from .VGG import *
 from .alexnet import createAlexNet
 from .simple_cnn import get_simple_cnn
 from .SignAlexNet import get_sign_alexnet
+from .LoRA import get_LoRA
 import logging 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ class ModelFactory:
     '''
     def __init__(self,)->None:
         return
-    def get_model(self, model, class_num, args={}):
+    def get_model(self, model, class_num, model_name, args={}):
         #now model could be: resnet, alexnet, ...
         if model == 'resnet18':
             return ResNet18(class_num)
@@ -38,6 +39,8 @@ class ModelFactory:
             return VGG_D(class_num=class_num)
         elif model == 'VGG_E':
             return VGG_E(class_num=class_num)
+        elif model == 'LoRA':
+            return get_LoRA(model_name=model_name, args=args)
         else:
             logger.warn("ModelFactory received an unknown model %s", model)
             return None

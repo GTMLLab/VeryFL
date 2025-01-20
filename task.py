@@ -35,7 +35,8 @@ class Task:
         self.test_dataset =  DatasetFactory().get_dataset(global_args.get('dataset'),False)
         #Get Model
         logger.info("Constructing Model from model factory with model %s and class_num %d", global_args['model'], global_args['class_num'])
-        self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'))
+        self.model = ModelFactory().get_model(model=self.global_args.get('model'),class_num=self.global_args.get('class_num'),
+                                              model_name=self.global_args.get('model_name'), args=self.global_args)
         
         #FL alg
         logger.info(f"Algorithm: {algorithm}")

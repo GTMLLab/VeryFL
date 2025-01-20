@@ -12,7 +12,7 @@ set_log_config()
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--benchmark', type=str, default="PACS", help="Running Benchmark(See ./config/benchmark.py)")
+    parser.add_argument('--benchmark', type=str, default="CIFAR10", help="Running Benchmark(See ./config/benchmark.py)")
     args = parser.parse_args()
     logger.info(f"Get benchmark {args.benchmark}")
     benchmark = config.benchmark.get_benchmark(args.benchmark)
@@ -22,4 +22,3 @@ if __name__=="__main__":
     logger.info("Get Global args dataset: %s, model: %s",global_args['dataset'], global_args['model'])
     classification_task = Task(global_args=global_args, train_args=train_args, algorithm=algorithm)
     classification_task.run()
-

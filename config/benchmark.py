@@ -1,5 +1,6 @@
 import logging
 from .algorithm import *
+from client.llm_clients import LLMClient
 #The list of support choice
 #
 
@@ -66,7 +67,7 @@ class CIFAR10(BenchMark):
             'batch_size': 32,
             'class_num': 10,
             'data_folder': './data',
-            'communication_round': 200,
+            'communication_round': 100,
             'non-iid': False,
             'alpha': 1,
         }
@@ -130,6 +131,43 @@ class Sign(BenchMark):
             'num_steps': 1,
         }
         self.algorithm = FedIPR()
+
+# For LLM fine-tune
+class Custom(BenchMark):
+    def __init__(self):
+        super(Custom,self).__init__('Custom')
+        self.global_args = {
+            'client_num': 3,
+            'model': 'LoRA',
+            'model_name': '/path/to/your/llm/chinese-alpaca-2-1_3b',
+            'dataset': 'DISC_MED',
+            'class_num': 0,
+            'watermark_dataset': False,
+            'batch_size': 32,
+            'communication_round': 10,
+            'non-iid': False,
+            'r': 8,
+            'lora_alpha': 16,
+            'target_modules': ['q_proj', "v_proj"],
+            'lora_dropout': 0.1,
+        }
+        self.train_args = {
+            'device': 'cuda',
+            'lr': 2e-5,
+            'weight_decay': 1e-5,
+            'reg_weight': 0.1,
+            'num_steps': 3,
+            'output_dir': './output',
+            'evaluation_strategy': 'no',
+            'per_device_train_batch_size': 4,
+            'per_device_eval_batch_size': 4,
+            'num_train_epochs': 5,
+            'logging_dir': "./log",
+            'logging_steps': 10,
+            'save_steps': 50,
+            'save_total_limit': 2,
+        }
+        self.algorithm = FedAvg(client=LLMClient)
         
         
 def get_benchmark(args: str) -> BenchMark:
@@ -142,6 +180,5 @@ def get_benchmark(args: str) -> BenchMark:
     elif(args == "Sign"):
         return Sign()
     else:
-        logger.error(f"Unknown Benchmark {args}")
-        raise Exception(f"Unknown Benchmark {args}") 
+        return Custom()
     
