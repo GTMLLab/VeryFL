@@ -94,7 +94,7 @@ In ./config/benchmark.py, each Benchmark contains three parts
 ## Troubleshooting
 
 1. **FileNotFoundError: [Errno 2] No such file or directory**
-When running the file test.py, error `No such file or directory: ../VeryFL/log/..` may occur if the directory the specified path does not exist. Please heck the `log_folder` variable in file VeryFL/config/log.py (by default it should be `log`). Create a subfolder of `VeryFL` named that variable (in the default case `log`) as: VeryFL/log/.
+When running the file test.py, error `No such file or directory: ../VeryFL/log/..` may occur if the specified path does not exist. Please check the `log_folder` variable in file `VeryFL/config/log.py` (by default it should be `log`). Create a subfolder of `VeryFL` named that variable (in the default case `log`) as: `VeryFL/log/.`
 2. **AssertionError: Torch not compiled with CUDA enabled**
 Please check the `device` parameter in the file `VeryFL/config/benchmark.py`. Change `cuda` to `cpu` if your cuda support isn't available (inproper installation of Pytorch, using platforms such as MacOS or Linux, etc.)
 
