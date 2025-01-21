@@ -15,7 +15,7 @@ def get_file_name():
         filename = os.path.join(log_folder,time + str(order) + suffix)
         if(os.path.exists(filename)):
             order += 1
-            continue
+            break
         else: 
             return filename
     
