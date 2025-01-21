@@ -50,6 +50,9 @@ By inject watermark into model through model watermarking technology, VeryFL imp
 ## Code Structure and Usage
 
 ### Quick Start
+
+First check the `log_folder` variable in file VeryFL/config/log.py (by default it should be `log`). Create a subfolder of `VeryFL` named that variable (in the default case `log`) as: VeryFL/log/.
+
 ```
 python test.py --benchmark FashionMNIST
 ```
