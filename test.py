@@ -5,12 +5,13 @@ from task import Task
 import config.benchmark
 from config.log import set_log_config
 logger = logging.getLogger(__name__)
-set_log_config()
+# set_log_config()
 
 #global_args, train_args = config.benchmark.FashionMNIST().get_args()
 #global_args, train_args, algorithm = config.benchmark.Sign().get_args()
 
 if __name__=="__main__":
+    set_log_config()
     parser = argparse.ArgumentParser()
     parser.add_argument('--benchmark', type=str, default="CIFAR10", help="Running Benchmark(See ./config/benchmark.py)")
     args = parser.parse_args()
