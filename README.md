@@ -51,8 +51,6 @@ By inject watermark into model through model watermarking technology, VeryFL imp
 
 ### Quick Start
 
-First c
-
 ```
 python test.py --benchmark FashionMNIST
 ```
